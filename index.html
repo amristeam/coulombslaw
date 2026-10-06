@@ -1,0 +1,1493 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Coulomb's Law Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: left topic rail (22.1-22.5, styled after the course menu) + one working page per topic with Learn / Simulate / Practice tabs.
+   Colour: cool blue-grey neutrals, course green as the single UI accent, charge colours (+ coral, - blue) reserved for physics. */
+:root{
+  --bg:#f1f4f8; --surface:#ffffff; --surface2:#e6ebf2; --cv:#fbfcfe;
+  --ink:#0c1a2b; --muted:#53647a; --line:#d1dae6;
+  --accent:#00d977; --accent-ink:#052e1b; --accent-text:#00663a;
+  --pos:#d63d1c; --neg:#1f63cf; --good:#16803f; --bad:#b9302a; --warn:#9a6212;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1018; --surface:#121b26; --surface2:#1a2634; --cv:#0e1620;
+    --ink:#e7edf5; --muted:#92a3b8; --line:#26364a;
+    --accent:#00d977; --accent-ink:#04261a; --accent-text:#3fe79b;
+    --pos:#ff7a59; --neg:#5da4ff; --good:#3fd081; --bad:#ff7d74; --warn:#e3a94a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1018; --surface:#121b26; --surface2:#1a2634; --cv:#0e1620;
+  --ink:#e7edf5; --muted:#92a3b8; --line:#26364a;
+  --accent:#00d977; --accent-ink:#04261a; --accent-text:#3fe79b;
+  --pos:#ff7a59; --neg:#5da4ff; --good:#3fd081; --bad:#ff7d74; --warn:#e3a94a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:17px/1.62 var(--f-body);-webkit-text-size-adjust:100%}
+.app{max-width:1280px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px);padding-block:20px 48px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--accent-text)}
+:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px;border-radius:4px}
+var{font-style:italic;font-family:var(--f-body)}
+sub,sup{line-height:0}
+
+/* header */
+.top .btn{white-space:nowrap}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.eyebrow{font:600 12px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:800;letter-spacing:-.02em}
+
+/* shell */
+.shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:start}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:8px}
+.navhead{background:var(--accent);color:var(--accent-ink);font:700 18px/1.2 var(--f-display);padding:15px 16px;border-radius:8px}
+.navlist{display:grid;gap:6px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;font:600 16px/1.3 var(--f-body);color:var(--ink);background:var(--surface2);border:0;border-radius:6px;padding:12px 14px;cursor:pointer}
+.nav:hover{background:var(--line)}
+.nav[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.nav .pg{font:600 12px var(--f-mono);opacity:.75;white-space:nowrap;font-variant-numeric:tabular-nums}
+.navsep{height:1px;background:var(--line);margin:6px 0}
+
+/* pages */
+.page{display:none}
+.page.on{display:block}
+.pagehead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.num{font:600 14px var(--f-mono);background:var(--accent);color:var(--accent-ink);padding:4px 9px;border-radius:4px}
+.pagehead h2{font-size:clamp(1.6rem,3.6vw,2.2rem);font-weight:800;letter-spacing:-.015em}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:22px;overflow-x:auto}
+.tab{font:600 16px var(--f-body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:10px 16px;margin-bottom:-1px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{display:none;gap:20px}
+.panel.on{display:grid}
+.panel>*{min-width:0}
+.panel p,.panel li{max-width:70ch}
+.panel h3{font-size:1.3rem;font-weight:700;margin-top:10px}
+.panel h4{font-size:1.05rem;font-weight:700}
+.panel ul,.panel ol{margin:0;padding-left:1.3em;display:grid;gap:6px}
+.lead{font-size:1.12rem;color:var(--ink)}
+
+.outcomes{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 20px;display:grid;gap:8px}
+.label{font:600 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;background:var(--surface2);border-radius:8px;padding:12px 16px;font-size:1.2rem}
+.eq small{font-size:.85rem;color:var(--muted)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .2em;text-align:center;line-height:1.25}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .3em .08em}
+.fr>span:last-child{padding:.08em .3em 0}
+.worked{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 20px;display:grid;gap:8px}
+.worked ol{gap:4px}
+.watch{background:color-mix(in srgb,var(--warn) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line));border-radius:10px;padding:14px 20px;display:grid;gap:6px}
+.watch .label{color:var(--warn)}
+table{border-collapse:collapse;width:100%;font-size:.97rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.tw table{min-width:520px}
+
+/* simulations */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:14px;min-width:0}
+.simhead{display:grid;gap:4px}
+.simhead h3{margin:0;font-size:1.25rem}
+.simhead p{color:var(--muted);font-size:.96rem}
+.canvaswrap{width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--cv);min-width:0}
+canvas{display:block;width:100%}
+canvas.drag{touch-action:none;cursor:crosshair}
+.simgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 22px}
+.c label{display:flex;justify-content:space-between;gap:10px;font-size:.95rem;font-weight:600}
+.c output{font:600 14px var(--f-mono);color:var(--accent-text);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent-text);margin:6px 0 0}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:7px 10px;max-width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.inl{display:inline-flex;align-items:center;gap:8px;font-size:.95rem;font-weight:600}
+.btn{font:600 14px var(--f-body);color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+.btn:hover{border-color:var(--accent-text)}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.ro{background:var(--surface2);border-radius:8px;padding:8px 12px;min-width:0}
+.ro span{display:block;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ro b{display:block;font:600 16px/1.35 var(--f-mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sub{color:var(--muted);font-size:.95rem;min-height:1.4em}
+.try{background:var(--surface2);border-radius:10px;padding:14px 18px;display:grid;gap:6px}
+
+/* quizzes */
+.qwrap{display:grid;gap:0}
+.q{border-top:1px solid var(--line);padding-block:18px;display:grid;gap:8px}
+.qt{font-weight:600;max-width:70ch}
+.qn{font:600 12px var(--f-mono);background:var(--surface2);padding:2px 7px;border-radius:4px;margin-right:8px;color:var(--muted)}
+.opts{display:grid;gap:8px;max-width:720px}
+.opt{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;text-align:left;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--accent-text)}
+.opt .ltr{font:600 13px var(--f-mono);color:var(--muted);padding-top:2px}
+.opt.good{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.opt[disabled]{cursor:default}
+.fb{max-width:70ch;font-size:.97rem;background:var(--surface2);border-radius:8px;padding:10px 14px}
+.sq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;gap:12px}
+.sq+.sq{margin-top:0}
+.sqh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.part{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:12px}
+.partrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.partrow input[type=text]{width:9.5em;font-family:var(--f-mono)}
+.mk{font:600 12px var(--f-mono);color:var(--muted)}
+.ans{background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:.97rem;max-width:70ch}
+.ans p+p{margin-top:4px}
+.res{font-weight:600;font-size:.95rem}
+.res.good{color:var(--good)} .res.bad{color:var(--bad)}
+.bar{height:10px;border-radius:5px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.score{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;gap:10px}
+.score h3{margin:0}
+.big{font:800 2.4rem/1 var(--f-display)}
+.rows{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:70px minmax(0,1fr) 54px;gap:10px;align-items:center;font:600 13px var(--f-mono)}
+.road{display:grid;gap:8px}
+.road button{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--ink);font:inherit;cursor:pointer}
+.road button:hover{border-color:var(--accent-text)}
+.road .t{font-weight:700}
+.road .d{color:var(--muted);font-size:.95rem;display:block}
+.road .pg{font:600 13px var(--f-mono);color:var(--muted)}
+.fcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.fcard .e{font-size:1.15rem}
+.fcard p{font-size:.93rem;color:var(--muted)}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;max-width:80ch}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:14px}
+  .side{top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;margin-inline:-16px;padding-inline:16px;border-bottom:1px solid var(--line)}
+  .navhead{display:none}
+  .navlist{display:flex;overflow-x:auto;gap:6px;padding-bottom:2px}
+  .nav{white-space:nowrap;padding:9px 12px;font-size:15px}
+  .navsep{display:none}
+  .simgrid{grid-template-columns:minmax(0,1fr)}
+  .top{align-items:center}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .road button{grid-template-columns:52px minmax(0,1fr)}
+  .road .pg{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="app">
+<header class="top">
+  <div>
+    <p class="eyebrow">Cambridge International AS &amp; A Level Physics · Interactive study media</p>
+    <h1>Coulomb's law</h1>
+  </div>
+  <button class="btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">Light / Dark</button>
+</header>
+
+<div class="shell">
+<nav class="side" aria-label="Topic navigation">
+  <div class="navhead">22 Coulomb's law</div>
+  <div class="navlist" id="navlist"></div>
+</nav>
+
+<main id="main">
+
+<!-- ============ OVERVIEW ============ -->
+<section class="page" id="s-home" data-title="Overview">
+  <div class="pagehead"><h2>Topic 22 at a glance</h2></div>
+  <div class="panel on" style="display:grid">
+    <p class="lead">This unit builds electric fields from one rule: the force between two point charges. Each subtopic has short notes, a simulation you can change, and exam-style questions with answers.</p>
+    <div class="outcomes">
+      <span class="label">How to use it</span>
+      <ol>
+        <li><b>Learn.</b> Read the notes and the worked example. Formulas are in boxes.</li>
+        <li><b>Simulate.</b> Change one quantity at a time and watch what the others do. Each simulation lists tasks to try.</li>
+        <li><b>Practice.</b> Answer multiple-choice items for instant feedback, then type numerical answers to the structured questions. Open the worked answer when you are done.</li>
+      </ol>
+    </div>
+    <h3>Roadmap</h3>
+    <div class="road" id="road"></div>
+    <h3>Constants used on every page</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Quantity</th><th>Symbol</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Permittivity of free space</td><td>ε<sub>0</sub></td><td>8.85 × 10<sup>−12</sup> F m<sup>−1</sup></td></tr>
+        <tr><td>Coulomb constant</td><td>1/(4πε<sub>0</sub>)</td><td>8.99 × 10<sup>9</sup> N m<sup>2</sup> C<sup>−2</sup></td></tr>
+        <tr><td>Elementary charge</td><td><var>e</var></td><td>1.60 × 10<sup>−19</sup> C</td></tr>
+        <tr><td>Electron mass</td><td><var>m</var><sub>e</sub></td><td>9.11 × 10<sup>−31</sup> kg</td></tr>
+        <tr><td>Proton mass</td><td><var>m</var><sub>p</sub></td><td>1.67 × 10<sup>−27</sup> kg</td></tr>
+        <tr><td>Alpha particle mass</td><td><var>m</var><sub>α</sub></td><td>6.64 × 10<sup>−27</sup> kg</td></tr>
+        <tr><td>Gravitational constant</td><td><var>G</var></td><td>6.67 × 10<sup>−11</sup> N m<sup>2</sup> kg<sup>−2</sup></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============ 22.1 ============ -->
+<section class="page" id="s22-1" data-title="22.1 Electric fields" data-topic="22.1">
+  <div class="pagehead"><span class="num">22.1</span><h2>Electric fields</h2></div>
+
+  <div class="panel" data-panel="Learn">
+    <div class="outcomes">
+      <span class="label">Learning outcomes</span>
+      <ul>
+        <li>Describe an electric field as a region where a charge experiences a force, and draw field lines for simple arrangements.</li>
+        <li>Define electric field strength and use <var>E</var> = <var>F</var>/<var>Q</var>.</li>
+        <li>Use <var>E</var> = <var>V</var>/<var>d</var> for the uniform field between parallel plates.</li>
+        <li>Describe and calculate the motion of a charged particle that enters a uniform field parallel or perpendicular to it.</li>
+      </ul>
+    </div>
+
+    <h3>What an electric field is</h3>
+    <p>A charge changes the space around it. Any other charge placed there feels a force, even with nothing touching it. We call the region where this happens an <b>electric field</b>. Electric fields are produced by charges, and a charge is the only thing that responds to one.</p>
+
+    <h3>Electric field strength</h3>
+    <p>The <b>electric field strength</b> at a point is the force per unit positive charge acting on a small stationary test charge placed at that point.</p>
+    <div class="eq"><span><var>E</var> = <span class="fr"><span><var>F</var></span><span><var>Q</var></span></span></span><small>unit: N C<sup>−1</sup> (equivalent to V m<sup>−1</sup>). A vector, pointing the way a positive charge would be pushed.</small></div>
+    <p>Rearranged, the force on any charge <var>Q</var> in a field is <var>F</var> = <var>QE</var>. A positive charge is pushed along the field; a negative charge is pushed against it.</p>
+
+    <h3>Field lines</h3>
+    <ul>
+      <li>The tangent to a line gives the direction of the force on a positive charge.</li>
+      <li>Lines that are close together mean a strong field; lines that are far apart mean a weak one.</li>
+      <li>Lines begin on positive charge and end on negative charge (or run to infinity). They never cross.</li>
+      <li>Lines meet the surface of a conductor at right angles.</li>
+    </ul>
+
+    <h3>The uniform field between parallel plates</h3>
+    <p>Two flat metal plates, one at each potential, produce a field with parallel, equally spaced lines in the middle. The strength is the same everywhere there. Near the edges the lines bulge outwards ("fringing") and the field is no longer uniform.</p>
+    <div class="eq"><span><var>E</var> = <span class="fr"><span><var>V</var></span><span><var>d</var></span></span></span><small><var>V</var> = potential difference between the plates, <var>d</var> = their separation (in metres).</small></div>
+
+    <h3>Charged particles in a uniform field</h3>
+    <p>The force <var>QE</var> is constant, so the acceleration <var>a</var> = <var>QE</var>/<var>m</var> is constant too. Two cases matter.</p>
+    <ul>
+      <li><b>Parallel to the field.</b> Straight-line motion with uniform acceleration. Use the equations of motion.</li>
+      <li><b>Perpendicular to the field.</b> Treat the two directions separately, as for a projectile. The speed across the plates stays constant, <var>t</var> = <var>L</var>/<var>v</var>, and the particle accelerates sideways. The path is a parabola.</li>
+    </ul>
+    <div class="eq"><span><var>y</var> = ½<var>at</var><sup>2</sup> = <span class="fr"><span><var>QEL</var><sup>2</sup></span><span>2<var>mv</var><sup>2</sup></span></span></span><small>sideways displacement after crossing plates of length <var>L</var></small></div>
+
+    <div class="worked">
+      <span class="label">Worked example</span>
+      <p>An electron enters the space between two parallel plates at 2.0 × 10<sup>7</sup> m s<sup>−1</sup>, parallel to the plates. The plates are 5.0 cm long and 3.0 cm apart, with a p.d. of 200 V. Find the sideways deflection on leaving.</p>
+      <ol>
+        <li><var>E</var> = <var>V</var>/<var>d</var> = 200 / 0.030 = 6.7 × 10<sup>3</sup> V m<sup>−1</sup></li>
+        <li><var>a</var> = <var>eE</var>/<var>m</var> = (1.60 × 10<sup>−19</sup> × 6.67 × 10<sup>3</sup>) / 9.11 × 10<sup>−31</sup> = 1.2 × 10<sup>15</sup> m s<sup>−2</sup></li>
+        <li><var>t</var> = <var>L</var>/<var>v</var> = 0.050 / 2.0 × 10<sup>7</sup> = 2.5 × 10<sup>−9</sup> s</li>
+        <li><var>y</var> = ½<var>at</var><sup>2</sup> = ½ × 1.17 × 10<sup>15</sup> × (2.5 × 10<sup>−9</sup>)<sup>2</sup> = 3.7 × 10<sup>−3</sup> m = 3.7 mm, towards the positive plate.</li>
+      </ol>
+      <p>Check this in the second simulation. The default settings are these numbers.</p>
+    </div>
+
+    <div class="watch">
+      <span class="label">Common mistakes</span>
+      <ul>
+        <li>Using <var>E</var> = <var>V</var>/<var>d</var> with <var>d</var> in centimetres. Convert to metres first.</li>
+        <li>Sending an electron the wrong way. The force on a negative charge is opposite to <var>E</var>.</li>
+        <li>Treating field strength as a force. It is force per unit charge.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Simulate">
+    <div class="sim" id="sim-fm1" data-sim="fieldmap" data-mode="field">
+      <div class="simhead"><h3>Field map</h3><p>Drag the charges. Move the pointer over the map to see which way a positive test charge would be pushed.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Choose <b>Dipole</b>. Where are the lines closest together? What does that tell you about the field there?</li>
+        <li>Choose <b>Two +</b> and move the pointer midway between the charges. Find the point where the arrow disappears. Why is the field zero there?</li>
+        <li>Choose <b>Parallel plates</b> and turn on field vectors. Compare the arrows in the middle with those near the edge.</li>
+      </ol>
+    </div>
+    <div class="sim" id="sim-def" data-sim="deflect">
+      <div class="simhead"><h3>Charged particle between parallel plates</h3><p>The particle enters parallel to the plates. The top plate is positive, so the field points down.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Keep the electron. Double the p.d. Predict the deflection, then check.</li>
+        <li>Switch to a proton at the same settings. Why is the deflection so much smaller?</li>
+        <li>Increase the entry speed. Why does a faster particle deflect less?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Practice">
+    <h3>Quick check</h3>
+    <div class="qwrap" data-quiz="22.1"></div>
+    <h3>Exam-style questions</h3>
+    <div class="rows" data-struct="22.1" style="gap:14px"></div>
+  </div>
+</section>
+
+<!-- ============ 22.2 ============ -->
+<section class="page" id="s22-2" data-title="22.2 Coulomb's law" data-topic="22.2">
+  <div class="pagehead"><span class="num">22.2</span><h2>Coulomb's law</h2></div>
+
+  <div class="panel" data-panel="Learn">
+    <div class="outcomes">
+      <span class="label">Learning outcomes</span>
+      <ul>
+        <li>State Coulomb's law for the force between two point charges in a vacuum.</li>
+        <li>Calculate the magnitude and direction of the force, and how it changes when charge or separation changes.</li>
+        <li>Recognise that the forces on the two charges are equal and opposite.</li>
+        <li>Explain why a charged sphere can be treated as a point charge at its centre.</li>
+      </ul>
+    </div>
+
+    <h3>The law</h3>
+    <p>The electrostatic force between two point charges is proportional to the product of the charges and inversely proportional to the square of their separation.</p>
+    <div class="eq"><span><var>F</var> = <span class="fr"><span><var>Q</var><sub>1</sub><var>Q</var><sub>2</sub></span><span>4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup></span></span></span><small>in a vacuum (air behaves almost the same). 1/(4π<var>ε</var><sub>0</sub>) = 8.99 × 10<sup>9</sup> N m<sup>2</sup> C<sup>−2</sup></small></div>
+
+    <h3>What the law tells you</h3>
+    <ul>
+      <li><b>Direction.</b> Like charges repel, unlike charges attract. If you keep the signs in the formula, a positive answer means repulsion and a negative answer means attraction.</li>
+      <li><b>Inverse square.</b> Double the separation and the force falls to a quarter. Triple it and the force falls to a ninth.</li>
+      <li><b>Product of charges.</b> Double one charge and the force doubles. Double both and it quadruples.</li>
+      <li><b>Newton's third law.</b> Each charge pulls or pushes the other with the same size of force, even when the charges are very different.</li>
+    </ul>
+
+    <h3>Point charges and spheres</h3>
+    <p>The law is written for point charges. A uniformly charged sphere acts, for points outside it, as if all its charge were at its centre. So <var>r</var> is the distance between centres, not between surfaces.</p>
+
+    <h3>More than two charges</h3>
+    <p>Forces from different charges add as vectors. Find the force from each charge on its own, then combine them using components or a scale diagram.</p>
+
+    <div class="worked">
+      <span class="label">Worked example</span>
+      <p>Two small spheres carry +3.0 μC and −5.0 μC. They are 20 cm apart in air. Find the force between them, and the force when they are 40 cm apart.</p>
+      <ol>
+        <li>Convert: <var>Q</var><sub>1</sub> = 3.0 × 10<sup>−6</sup> C, <var>Q</var><sub>2</sub> = 5.0 × 10<sup>−6</sup> C, <var>r</var> = 0.20 m.</li>
+        <li><var>F</var> = (8.99 × 10<sup>9</sup> × 3.0 × 10<sup>−6</sup> × 5.0 × 10<sup>−6</sup>) / 0.20<sup>2</sup> = 3.4 N, attractive.</li>
+        <li>At 0.40 m the separation is doubled, so <var>F</var> = 3.37 / 4 = 0.84 N.</li>
+      </ol>
+    </div>
+
+    <div class="watch">
+      <span class="label">Common mistakes</span>
+      <ul>
+        <li>Forgetting to convert μC, nC and cm to C and m.</li>
+        <li>Squaring only part of the denominator. The whole separation is squared.</li>
+        <li>Thinking the larger charge feels the larger force. Both feel the same force.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Simulate">
+    <div class="sim" id="sim-cb" data-sim="coulomb">
+      <div class="simhead"><h3>Force between two point charges</h3><p>Set the charges and the separation. The graph updates with the force at the current separation.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Set <var>r</var> = 10 cm and note <var>F</var>. Change <var>r</var> to 20 cm, then 30 cm. Compare the ratios with 1/4 and 1/9.</li>
+        <li>Double <var>q</var><sub>1</sub> and double <var>r</var> together. What happens to the force?</li>
+        <li>Change the sign of one charge. What changes, and what stays the same?</li>
+        <li>Look at the constant <var>F</var><var>r</var><sup>2</sup>. Does it change when you change <var>r</var>?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Practice">
+    <h3>Quick check</h3>
+    <div class="qwrap" data-quiz="22.2"></div>
+    <h3>Exam-style questions</h3>
+    <div class="rows" data-struct="22.2" style="gap:14px"></div>
+  </div>
+</section>
+
+<!-- ============ 22.3 ============ -->
+<section class="page" id="s22-3" data-title="22.3 Electric field strength for a radial field" data-topic="22.3">
+  <div class="pagehead"><span class="num">22.3</span><h2>Electric field strength for a radial field</h2></div>
+
+  <div class="panel" data-panel="Learn">
+    <div class="outcomes">
+      <span class="label">Learning outcomes</span>
+      <ul>
+        <li>Derive and use <var>E</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>) for a point charge or charged sphere.</li>
+        <li>Sketch and interpret graphs of <var>E</var> against <var>r</var> and against 1/<var>r</var><sup>2</sup>.</li>
+        <li>Combine the fields of two or more charges by vector addition.</li>
+        <li>Compare radial and uniform fields.</li>
+      </ul>
+    </div>
+
+    <h3>From Coulomb's law to field strength</h3>
+    <p>Place a small test charge <var>q</var> at distance <var>r</var> from a point charge <var>Q</var>. Coulomb's law gives the force, and dividing by <var>q</var> gives the field strength.</p>
+    <div class="eq">
+      <span><var>E</var> = <span class="fr"><span><var>F</var></span><span><var>q</var></span></span> = <span class="fr"><span><var>Q</var></span><span>4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup></span></span></span>
+      <small>direction: away from +<var>Q</var>, towards −<var>Q</var></small>
+    </div>
+    <p>The field strength depends on the source charge <var>Q</var> and the distance <var>r</var>, not on the test charge. That is why it is a property of the point in space.</p>
+
+    <h3>Radial fields in graphs</h3>
+    <ul>
+      <li><var>E</var> against <var>r</var> is a curve that falls steeply and never reaches zero. Doubling <var>r</var> divides <var>E</var> by 4.</li>
+      <li><var>E</var> against 1/<var>r</var><sup>2</sup> is a straight line through the origin. Its gradient is <var>Q</var>/(4π<var>ε</var><sub>0</sub>), so you can find <var>Q</var> from experimental data.</li>
+    </ul>
+
+    <h3>Charged spheres</h3>
+    <p>Outside a charged sphere, the field is the same as for a point charge of the same size at the centre, with <var>r</var> measured from the centre. At the surface, <var>r</var> equals the radius <var>R</var> and the field is at its largest. Inside a conducting sphere the field is zero.</p>
+
+    <h3>Several charges</h3>
+    <p>Fields add as vectors. Between two equal like charges there is a point where the two fields cancel exactly. Between unlike charges the fields point the same way, so they add.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th></th><th>Uniform field</th><th>Radial field</th></tr></thead>
+      <tbody>
+        <tr><td>Source</td><td>Parallel charged plates</td><td>Point charge or sphere</td></tr>
+        <tr><td>Field lines</td><td>Parallel, equally spaced</td><td>Spread out from or into the charge</td></tr>
+        <tr><td>Strength</td><td>Constant, <var>E</var> = <var>V</var>/<var>d</var></td><td>Falls as 1/<var>r</var><sup>2</sup></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="worked">
+      <span class="label">Worked example</span>
+      <p>Find the field strength 0.30 m from a point charge of +2.0 nC.</p>
+      <ol>
+        <li><var>E</var> = (8.99 × 10<sup>9</sup> × 2.0 × 10<sup>−9</sup>) / 0.30<sup>2</sup></li>
+        <li><var>E</var> = 18.0 / 0.090 = 2.0 × 10<sup>2</sup> N C<sup>−1</sup>, directed away from the charge.</li>
+      </ol>
+    </div>
+
+    <div class="watch">
+      <span class="label">Common mistakes</span>
+      <ul>
+        <li>Using <var>E</var> = <var>V</var>/<var>d</var> for a point charge. That relation is for uniform fields.</li>
+        <li>Measuring <var>r</var> from the surface of a sphere instead of its centre.</li>
+        <li>Adding field strengths as numbers when they point in different directions.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Simulate">
+    <div class="sim" id="sim-rad" data-sim="radial">
+      <div class="simhead"><h3>Field of a charged sphere</h3><p>Move the probe radius and watch <var>E</var> fall along the curve. Switch the graph to 1/<var>r</var><sup>2</sup> to get a straight line.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Set <var>r</var> to 10 cm and note <var>E</var>. Then set 20 cm. Does <var>E</var> fall to a quarter?</li>
+        <li>Switch to the 1/<var>r</var><sup>2</sup> graph. Change <var>Q</var> and watch the gradient.</li>
+        <li>Make <var>Q</var> negative. What happens to the direction of <var>E</var> and the force on a positive test charge?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Practice">
+    <h3>Quick check</h3>
+    <div class="qwrap" data-quiz="22.3"></div>
+    <h3>Exam-style questions</h3>
+    <div class="rows" data-struct="22.3" style="gap:14px"></div>
+  </div>
+</section>
+
+<!-- ============ 22.4 ============ -->
+<section class="page" id="s22-4" data-title="22.4 Electric potential" data-topic="22.4">
+  <div class="pagehead"><span class="num">22.4</span><h2>Electric potential</h2></div>
+
+  <div class="panel" data-panel="Learn">
+    <div class="outcomes">
+      <span class="label">Learning outcomes</span>
+      <ul>
+        <li>Define electric potential and use <var>V</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var>) for a point charge.</li>
+        <li>Calculate work done and potential energy changes using <var>W</var> = <var>q</var>Δ<var>V</var>.</li>
+        <li>Relate field strength to the gradient of a potential graph, and potential difference to the area under a field graph.</li>
+        <li>Describe equipotential surfaces and how they relate to field lines.</li>
+      </ul>
+    </div>
+
+    <h3>Potential</h3>
+    <p>The <b>electric potential</b> at a point is the work done per unit positive charge in bringing a small test charge from infinity to that point. It is a scalar, measured in volts (J C<sup>−1</sup>). Potential is zero at infinity.</p>
+    <div class="eq"><span><var>V</var> = <span class="fr"><span><var>Q</var></span><span>4π<var>ε</var><sub>0</sub><var>r</var></span></span></span><small>For +<var>Q</var> the potential is positive, for −<var>Q</var> it is negative. It falls as 1/<var>r</var>, more slowly than the field does.</small></div>
+
+    <h3>Energy and work</h3>
+    <p>A charge <var>q</var> at a point where the potential is <var>V</var> has electric potential energy <var>qV</var>. Moving it between two points changes this energy by <var>q</var>Δ<var>V</var>, whatever route is taken.</p>
+    <div class="eq">
+      <span><var>W</var> = <var>q</var>Δ<var>V</var></span>
+      <span><var>E</var><sub>p</sub> = <var>qV</var> = <span class="fr"><span><var>Qq</var></span><span>4π<var>ε</var><sub>0</sub><var>r</var></span></span></span>
+    </div>
+    <p>If <var>W</var> is positive, an external agent has to do work to move the charge, and the charge stores that energy. If it is negative, the field does the work and the charge gains kinetic energy.</p>
+
+    <h3>Field and potential</h3>
+    <div class="eq">
+      <span><var>E</var> = −<span class="fr"><span>Δ<var>V</var></span><span>Δ<var>x</var></span></span></span>
+      <small>The field strength is minus the gradient of the <var>V</var>–<var>x</var> graph. The area under an <var>E</var>–<var>x</var> graph gives the potential difference.</small>
+    </div>
+    <p>For a point charge, <var>V</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var>) has gradient −<var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>), and minus that gradient is exactly the field strength from 22.3. In a uniform field the <var>V</var>–<var>x</var> graph is a straight line, which gives <var>E</var> = <var>V</var>/<var>d</var>.</p>
+
+    <h3>Equipotentials</h3>
+    <p>An equipotential surface joins points at the same potential. No work is done moving a charge along it, so field lines cross it at right angles. Where equipotentials are close together the potential changes quickly and the field is strong.</p>
+
+    <div class="worked">
+      <span class="label">Worked example</span>
+      <p>A proton is moved from 2.0 cm to 1.0 cm from a fixed point charge of +5.0 nC. Find the work done.</p>
+      <ol>
+        <li><var>V</var><sub>1</sub> = (8.99 × 10<sup>9</sup> × 5.0 × 10<sup>−9</sup>) / 0.020 = 2.25 × 10<sup>3</sup> V</li>
+        <li><var>V</var><sub>2</sub> = (8.99 × 10<sup>9</sup> × 5.0 × 10<sup>−9</sup>) / 0.010 = 4.50 × 10<sup>3</sup> V</li>
+        <li><var>W</var> = <var>e</var>Δ<var>V</var> = 1.60 × 10<sup>−19</sup> × 2.25 × 10<sup>3</sup> = 3.6 × 10<sup>−16</sup> J (positive: energy is stored)</li>
+      </ol>
+    </div>
+
+    <div class="watch">
+      <span class="label">Common mistakes</span>
+      <ul>
+        <li>Treating potential as a vector. It has a sign but no direction.</li>
+        <li>Dropping the sign of a negative source charge when calculating <var>V</var>.</li>
+        <li>Reading field strength from the <var>height</var> of a <var>V</var>–<var>x</var> graph instead of its gradient.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Simulate">
+    <div class="sim" id="sim-pot" data-sim="potential">
+      <div class="simhead"><h3>Potential, field and work</h3><p>Move a test charge from <var>r</var><sub>A</sub> to <var>r</var><sub>B</sub> near a point charge <var>Q</var>. The left graph shows the potential and the slope at A. The right graph shows the field and shades the area that equals the potential difference.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Compare the slope readout with the formula value of <var>E</var> at A. Why does the slope have to be negated?</li>
+        <li>Move B closer than A. Is the work done on a proton positive or negative? Then try an electron.</li>
+        <li>Set A and B to the same radius. What is the work, and what is the shaded area?</li>
+      </ol>
+    </div>
+    <div class="sim" id="sim-fm2" data-sim="fieldmap" data-mode="potential">
+      <div class="simhead"><h3>Equipotential map</h3><p>Lines join points of equal potential. Warm tint is positive potential, cool tint is negative. Drag the charges and compare with the field lines.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Turn on <b>Field lines</b> as well. Check that the lines cross equipotentials at right angles.</li>
+        <li>Choose <b>Parallel plates</b>. Are the equipotentials equally spaced? What does that say about the field?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Practice">
+    <h3>Quick check</h3>
+    <div class="qwrap" data-quiz="22.4"></div>
+    <h3>Exam-style questions</h3>
+    <div class="rows" data-struct="22.4" style="gap:14px"></div>
+  </div>
+</section>
+
+<!-- ============ 22.5 ============ -->
+<section class="page" id="s22-5" data-title="22.5 Gravitational and electric fields" data-topic="22.5">
+  <div class="pagehead"><span class="num">22.5</span><h2>Gravitational and electric fields</h2></div>
+
+  <div class="panel" data-panel="Learn">
+    <div class="outcomes">
+      <span class="label">Learning outcomes</span>
+      <ul>
+        <li>Compare gravitational and electric fields: quantities, equations, similarities and differences.</li>
+        <li>Explain why the electric force between particles is vastly stronger than the gravitational force, yet gravity dominates for planets.</li>
+        <li>Explain the sign of gravitational and electric potential.</li>
+      </ul>
+    </div>
+
+    <h3>Same shape, different source</h3>
+    <p>Both fields act at a distance, both follow an inverse-square law for point sources, and both can be described by a field strength and a potential. Many results from 22.3 and 22.4 carry over once you swap mass for charge.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>Quantity</th><th>Gravitational</th><th>Electric</th></tr></thead>
+      <tbody>
+        <tr><td>Source</td><td>Mass <var>M</var></td><td>Charge <var>Q</var></td></tr>
+        <tr><td>Force between two point sources</td><td><var>F</var> = <var>GMm</var>/<var>r</var><sup>2</sup></td><td><var>F</var> = <var>Q</var><sub>1</sub><var>Q</var><sub>2</sub>/(4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)</td></tr>
+        <tr><td>Field strength</td><td><var>g</var> = <var>GM</var>/<var>r</var><sup>2</sup> (N kg<sup>−1</sup>)</td><td><var>E</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>) (N C<sup>−1</sup>)</td></tr>
+        <tr><td>Potential</td><td><var>φ</var> = −<var>GM</var>/<var>r</var> (J kg<sup>−1</sup>)</td><td><var>V</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var>) (J C<sup>−1</sup>)</td></tr>
+        <tr><td>Direction of force</td><td>Always attractive</td><td>Attractive or repulsive</td></tr>
+        <tr><td>Sign of potential</td><td>Always negative</td><td>Positive or negative</td></tr>
+        <tr><td>Shielding</td><td>Cannot be shielded</td><td>Can be shielded by conductors</td></tr>
+        <tr><td>Strength of the constant</td><td><var>G</var> = 6.67 × 10<sup>−11</sup></td><td>1/(4π<var>ε</var><sub>0</sub>) = 8.99 × 10<sup>9</sup></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Why gravity is neglected inside atoms</h3>
+    <p>For a proton and an electron in a hydrogen atom, the electric force is about 10<sup>39</sup> times the gravitational force. Both forces fall as 1/<var>r</var><sup>2</sup>, so this ratio does not depend on separation. It is set by the particles themselves.</p>
+    <p>Gravity wins at large scales because bulk matter is almost exactly neutral. Positive and negative charges cancel, while masses only add.</p>
+
+    <h3>The sign of potential</h3>
+    <p>Both potentials are zero at infinity. Gravity is always attractive, so bringing a mass in from infinity is done by the field, and the potential falls below zero. Bringing a positive test charge towards a positive source takes work against repulsion, so the potential rises above zero. Bring it towards a negative source and the potential is negative.</p>
+
+    <div class="worked">
+      <span class="label">Worked example</span>
+      <p>In a hydrogen atom the electron is 5.3 × 10<sup>−11</sup> m from the proton. Compare the electric and gravitational forces.</p>
+      <ol>
+        <li><var>F</var><sub>E</sub> = (8.99 × 10<sup>9</sup> × (1.60 × 10<sup>−19</sup>)<sup>2</sup>) / (5.3 × 10<sup>−11</sup>)<sup>2</sup> = 8.2 × 10<sup>−8</sup> N</li>
+        <li><var>F</var><sub>G</sub> = (6.67 × 10<sup>−11</sup> × 9.11 × 10<sup>−31</sup> × 1.67 × 10<sup>−27</sup>) / (5.3 × 10<sup>−11</sup>)<sup>2</sup> = 3.6 × 10<sup>−47</sup> N</li>
+        <li><var>F</var><sub>E</sub> / <var>F</var><sub>G</sub> = 2.3 × 10<sup>39</sup></li>
+      </ol>
+    </div>
+
+    <div class="watch">
+      <span class="label">Common mistakes</span>
+      <ul>
+        <li>Saying gravity is "weaker" without saying for which particles. For planets it is the main force.</li>
+        <li>Claiming electric force can be shielded but not saying why: free charges in a conductor rearrange to cancel the field.</li>
+        <li>Mixing the units: N kg<sup>−1</sup> for <var>g</var> and N C<sup>−1</sup> for <var>E</var>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Simulate">
+    <div class="sim" id="sim-cmp" data-sim="compare">
+      <div class="simhead"><h3>Electric force against gravitational force</h3><p>Pick a pair of particles and a separation. Both lines on the log graph fall with the same slope, so the gap between them never changes.</p></div>
+    </div>
+    <div class="try"><span class="label">Try this</span>
+      <ol>
+        <li>Pick the proton–electron pair and slide <var>r</var> across the whole range. Does the ratio change?</li>
+        <li>Switch to two protons. Compare the directions of the two forces.</li>
+        <li>Pick the 1 kg and 1 C example. Which constant causes the huge ratio, <var>G</var> or 1/(4π<var>ε</var><sub>0</sub>)?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="Practice">
+    <h3>Quick check</h3>
+    <div class="qwrap" data-quiz="22.5"></div>
+    <h3>Exam-style questions</h3>
+    <div class="rows" data-struct="22.5" style="gap:14px"></div>
+  </div>
+</section>
+
+<!-- ============ PRACTICE TEST ============ -->
+<section class="page" id="s-test" data-title="Practice test">
+  <div class="pagehead"><h2>Mixed practice test</h2></div>
+  <div class="panel on" style="display:grid">
+    <p class="lead">All multiple-choice questions from 22.1 to 22.5 in random order. You get feedback after each answer and a topic breakdown at the end.</p>
+    <div class="btnrow"><button class="btn primary" type="button" id="testNew">Start a new attempt</button><span class="sub" id="testProg"></span></div>
+    <div class="bar" aria-hidden="true"><i id="testBar" style="width:0%"></i></div>
+    <div id="testScore"></div>
+    <div class="qwrap" id="testHost"></div>
+  </div>
+</section>
+
+<!-- ============ FORMULAS ============ -->
+<section class="page" id="s-formulas" data-title="Formula sheet">
+  <div class="pagehead"><h2>Formula sheet</h2></div>
+  <div class="panel on" style="display:grid">
+    <div class="fcards">
+      <div class="fcard"><span class="label">22.1 Field strength</span><div class="e"><var>E</var> = <var>F</var>/<var>Q</var></div><p>N C<sup>−1</sup>. Force on a charge: <var>F</var> = <var>QE</var>.</p></div>
+      <div class="fcard"><span class="label">22.1 Uniform field</span><div class="e"><var>E</var> = <var>V</var>/<var>d</var></div><p>Parallel plates, away from edges. Deflection <var>y</var> = ½<var>at</var><sup>2</sup>, with <var>a</var> = <var>QE</var>/<var>m</var>.</p></div>
+      <div class="fcard"><span class="label">22.2 Coulomb's law</span><div class="e"><var>F</var> = <var>Q</var><sub>1</sub><var>Q</var><sub>2</sub> / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)</div><p>Point charges in a vacuum. Equal and opposite on the two charges.</p></div>
+      <div class="fcard"><span class="label">22.3 Radial field</span><div class="e"><var>E</var> = <var>Q</var> / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)</div><p>Point charge, or sphere with <var>r</var> measured from the centre.</p></div>
+      <div class="fcard"><span class="label">22.4 Potential</span><div class="e"><var>V</var> = <var>Q</var> / (4π<var>ε</var><sub>0</sub><var>r</var>)</div><p>Scalar. Zero at infinity. Positive for +<var>Q</var>, negative for −<var>Q</var>.</p></div>
+      <div class="fcard"><span class="label">22.4 Work and energy</span><div class="e"><var>W</var> = <var>q</var>Δ<var>V</var>, <var>E</var><sub>p</sub> = <var>qV</var></div><p>Work done on the charge by an external agent.</p></div>
+      <div class="fcard"><span class="label">22.4 Field from potential</span><div class="e"><var>E</var> = −Δ<var>V</var>/Δ<var>x</var></div><p>Gradient of a <var>V</var>–<var>x</var> graph. The area under <var>E</var>–<var>x</var> gives Δ<var>V</var>.</p></div>
+      <div class="fcard"><span class="label">22.5 Gravity</span><div class="e"><var>F</var> = <var>GMm</var>/<var>r</var><sup>2</sup>, <var>g</var> = <var>GM</var>/<var>r</var><sup>2</sup>, <var>φ</var> = −<var>GM</var>/<var>r</var></div><p>Same structure as the electric equations with 1/(4π<var>ε</var><sub>0</sub>) replaced by <var>G</var>.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>Aligned with the electric-field content of Cambridge International AS &amp; A Level Physics (9702). Notes, questions and simulations are original teaching material; check wording and numbering against the syllabus for your exam year. Numerical answers use the constants listed on the overview page.</footer>
+</div>
+<script>
+(function(){
+'use strict';
+var K=8.99e9, E_CH=1.60e-19, M_E=9.11e-31, M_P=1.67e-27, M_A=6.64e-27, G=6.67e-11;
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+var SUPM={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','+':''};
+function sup(n){return String(n).split('').map(function(c){return SUPM[c]!==undefined?SUPM[c]:c;}).join('');}
+function sci(v,d){d=d||3;if(!isFinite(v))return '—';if(v===0)return '0';var p=v.toExponential(d-1).split('e');return p[0]+'×10'+sup(parseInt(p[1],10));}
+function fmt(v,d){d=d||3;if(!isFinite(v))return '—';if(v===0)return '0';var a=Math.abs(v);if(a>=1e4||a<1e-2)return sci(v,d);return String(+v.toPrecision(d));}
+function sgn(v,d){return (v>0?'+':v<0?'−':'')+fmt(Math.abs(v),d);}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function rgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(function(c){return c+c;}).join('');var n=parseInt(h,16);return [(n>>16)&255,(n>>8)&255,n&255];}
+
+var redraws=[];
+function reg(fn){redraws.push(fn);return fn;}
+function redrawAll(){redraws.forEach(function(f){try{f();}catch(e){console.error(e);}});}
+
+function tok(){
+  var cs=getComputedStyle(document.documentElement);
+  function g(n){return cs.getPropertyValue(n).trim();}
+  return {ink:g('--ink'),muted:g('--muted'),line:g('--line'),surface:g('--surface'),surface2:g('--surface2'),cv:g('--cv'),
+    accent:g('--accent'),accentText:g('--accent-text'),pos:g('--pos'),neg:g('--neg'),good:g('--good'),bad:g('--bad'),warn:g('--warn'),
+    mono:g('--f-mono')||'monospace',body:g('--f-body')||'sans-serif'};
+}
+function fit(cv,ar){
+  var wrap=cv.parentElement,w=Math.floor(wrap.clientWidth);
+  if(!w)return null;
+  var h=Math.round(w*ar),dpr=Math.min(window.devicePixelRatio||1,2);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  return {ctx:ctx,w:w,h:h};
+}
+function niceStep(range,n){var raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+function ticks(a,b,n){var s=niceStep(b-a,n),t=[];for(var v=Math.ceil(a/s-1e-9)*s;v<=b+s*1e-9;v+=s)t.push(+v.toPrecision(12));return t;}
+
+function plot(ctx,w,h,o){
+  var T=tok(),small=w<460,m={l:small?62:76,r:20,t:12,b:42};
+  var pw=w-m.l-m.r,ph=h-m.t-m.b;
+  function X(x){return m.l+(x-o.xmin)/(o.xmax-o.xmin)*pw;}
+  function Y(y){return m.t+ph-(y-o.ymin)/(o.ymax-o.ymin)*ph;}
+  ctx.save();
+  ctx.font=(small?10:11)+'px '+T.mono;ctx.lineWidth=1;
+  var xt=o.xticks||ticks(o.xmin,o.xmax,small?4:6),yt=o.yticks||ticks(o.ymin,o.ymax,5);
+  var xf=o.xfmt||function(v){return fmt(v,2);},yf=o.yfmt||function(v){return fmt(v,2);};
+  ctx.textAlign='center';ctx.textBaseline='top';
+  xt.forEach(function(v){var x=X(v);ctx.strokeStyle=T.line;ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+ph);ctx.stroke();ctx.fillStyle=T.muted;ctx.fillText(xf(v),x,m.t+ph+6);});
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  yt.forEach(function(v){var y=Y(v);ctx.strokeStyle=T.line;ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+pw,y);ctx.stroke();ctx.fillStyle=T.muted;ctx.fillText(yf(v),m.l-7,y);});
+  ctx.strokeStyle=T.ink;ctx.lineWidth=1.4;ctx.beginPath();
+  if((o.ymin<0&&o.ymax>0&&!o.noZero)){ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+pw,Y(0));}
+  ctx.moveTo(m.l,m.t);ctx.lineTo(m.l,m.t+ph);if(!((o.ymin<0&&o.ymax>0&&!o.noZero))){ctx.lineTo(m.l+pw,m.t+ph);}
+  ctx.stroke();
+  ctx.fillStyle=T.ink;ctx.font='600 '+(small?10:11)+'px '+T.body;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(o.xl||'',m.l+pw/2,h-3);
+  ctx.save();ctx.translate(11,m.t+ph/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText(o.yl||'',0,0);ctx.restore();
+  ctx.restore();
+  return {X:X,Y:Y,m:m,pw:pw,ph:ph,T:T};
+}
+function clipPlot(ctx,P){ctx.save();ctx.beginPath();ctx.rect(P.m.l,P.m.t,P.pw,P.ph);ctx.clip();}
+function curve(ctx,P,fn,x0,x1,n,color,lw){
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2.2;ctx.beginPath();
+  for(var i=0;i<=n;i++){var x=x0+(x1-x0)*i/n,y=fn(x);if(i===0)ctx.moveTo(P.X(x),P.Y(y));else ctx.lineTo(P.X(x),P.Y(y));}
+  ctx.stroke();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  var a=Math.atan2(y2-y1,x2-x1);head=head||8;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw||2;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(a)*head*0.6,y2-Math.sin(a)*head*0.6);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,rad,q,T){
+  ctx.fillStyle=q>0?T.pos:q<0?T.neg:T.muted;ctx.beginPath();ctx.arc(x,y,rad,0,6.2832);ctx.fill();
+  ctx.strokeStyle=T.cv;ctx.lineWidth=2;ctx.stroke();
+  if(rad>=8){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.lineCap='round';ctx.beginPath();
+    var s=Math.min(rad*0.45,7);
+    if(q!==0){ctx.moveTo(x-s,y);ctx.lineTo(x+s,y);}
+    if(q>0){ctx.moveTo(x,y-s);ctx.lineTo(x,y+s);}
+    ctx.stroke();}
+}
+function txt(ctx,s,x,y,color,font,al,bl){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=al||'left';ctx.textBaseline=bl||'alphabetic';ctx.fillText(s,x,y);}
+
+/* controls */
+function makeCtl(prefix,defs,onChange){
+  var host=document.createElement('div');host.className='ctl';
+  host.innerHTML=defs.map(function(d){return '<div class="c"><label for="'+prefix+'-'+d.k+'"><span>'+d.label+'</span><output id="'+prefix+'-'+d.k+'-o" for="'+prefix+'-'+d.k+'"></output></label><input type="range" id="'+prefix+'-'+d.k+'" min="'+d.min+'" max="'+d.max+'" step="'+d.step+'" value="'+d.v+'"></div>';}).join('');
+  var st={},inp={};
+  function upd(d){var i=inp[d.k];st[d.k]=+i.value;$('#'+prefix+'-'+d.k+'-o',host).textContent=d.fmt(st[d.k]);}
+  defs.forEach(function(d){inp[d.k]=$('#'+prefix+'-'+d.k,host);upd(d);inp[d.k].addEventListener('input',function(){upd(d);onChange(st,d.k);});});
+  return {el:host,st:st,inp:inp,set:function(k,v,min){var d=defs.filter(function(x){return x.k===k;})[0];if(min!==undefined)inp[k].min=min;inp[k].value=v;upd(d);}};
+}
+function roHTML(list){return list.map(function(x){return '<div class="ro" data-ro="'+x[0]+'"><span>'+x[1]+'</span><b>—</b></div>';}).join('');}
+function setRO(root,k,v){var e=$('[data-ro="'+k+'"] b',root);if(e)e.textContent=v;}
+function cv(id,label){return '<div class="canvaswrap"><canvas id="'+id+'" role="img" aria-label="'+label+'"></canvas></div>';}
+
+/* ================= FIELD MAPPER ================= */
+function FieldMapper(root){
+  var id=root.id,mode=root.dataset.mode||'field',W=720,H=420;
+  var ch=[],seeds=null,lines=[],dirtyL=true,dirtyE=true,eqCv=null,ptr=null,drag=null,view={lines:mode==='field',vec:false,eq:mode==='potential'},vscale=500,raf=0,active='dip';
+  function plateSet(){var a=[];for(var i=0;i<36;i++){var x=150+i*(420/35);a.push({x:x,y:110,q:0.05,fixed:true,small:true});a.push({x:x,y:310,q:-0.05,fixed:true,small:true});}return a;}
+  var presets={
+    pos:{name:'Single +',f:function(){return [{x:360,y:210,q:1}];}},
+    neg:{name:'Single −',f:function(){return [{x:360,y:210,q:-1}];}},
+    dip:{name:'Dipole',f:function(){return [{x:250,y:210,q:1},{x:470,y:210,q:-1}];}},
+    two:{name:'Two +',f:function(){return [{x:260,y:210,q:1},{x:460,y:210,q:1}];}},
+    plates:{name:'Parallel plates',f:plateSet,seeds:true,vs:60}
+  };
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML=cv(id+'-cv','Electric field map with draggable charges')+
+   '<div class="btnrow" data-presets></div>'+
+   '<div class="btnrow"><button class="btn" type="button" id="'+id+'-addp">Add + charge</button><button class="btn" type="button" id="'+id+'-addn">Add − charge</button>'+
+   '<label class="inl" for="'+id+'-mag">Size <select id="'+id+'-mag"><option>1</option><option>2</option><option>3</option></select></label>'+
+   '<button class="btn" type="button" id="'+id+'-undo">Remove last</button></div>'+
+   '<div class="btnrow"><button class="btn" type="button" data-view="lines">Field lines</button><button class="btn" type="button" data-view="vec">Field vectors</button><button class="btn" type="button" data-view="eq">Equipotentials</button></div>'+
+   '<p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var canvas=$('canvas',wrap),msg=$('[data-msg]',wrap);
+  var pbox=$('[data-presets]',wrap);
+  Object.keys(presets).forEach(function(k){var b=document.createElement('button');b.type='button';b.className='btn';b.textContent=presets[k].name;b.dataset.p=k;b.addEventListener('click',function(){load(k);});pbox.appendChild(b);});
+  $$('[data-view]',wrap).forEach(function(b){b.setAttribute('aria-pressed',String(view[b.dataset.view]));b.addEventListener('click',function(){var k=b.dataset.view;view[k]=!view[k];b.setAttribute('aria-pressed',String(view[k]));if(k==='eq')dirtyE=true;schedule();});});
+  function load(k){var p=presets[k];active=k;ch=p.f();seeds=p.seeds?[]:null;vscale=p.vs||500;
+    if(p.seeds){for(var i=0;i<15;i++)seeds.push({x:165+i*(390/14),y:118});}
+    dirtyL=dirtyE=true;$$('[data-p]',wrap).forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.p===k));});schedule();}
+  function add(sign){if(seeds){ch=ch.filter(function(c){return !c.fixed;});seeds=null;vscale=500;active='';$$('[data-p]',wrap).forEach(function(b){b.setAttribute('aria-pressed','false');});}
+    var mag=+$('#'+id+'-mag',wrap).value;ch.push({x:360+(Math.random()-0.5)*220,y:210+(Math.random()-0.5)*160,q:sign*mag});dirtyL=dirtyE=true;schedule();}
+  $('#'+id+'-addp',wrap).addEventListener('click',function(){add(1);});
+  $('#'+id+'-addn',wrap).addEventListener('click',function(){add(-1);});
+  $('#'+id+'-undo',wrap).addEventListener('click',function(){for(var i=ch.length-1;i>=0;i--){if(!ch[i].fixed){ch.splice(i,1);break;}}dirtyL=dirtyE=true;schedule();});
+
+  function field(px,py){var ex=0,ey=0;for(var i=0;i<ch.length;i++){var c=ch[i],dx=px-c.x,dy=py-c.y,r2=dx*dx+dy*dy;if(r2<9)r2=9;var r=Math.sqrt(r2),f=c.q/r2;ex+=f*dx/r;ey+=f*dy/r;}return [ex,ey];}
+  function pot(px,py){var v=0;for(var i=0;i<ch.length;i++){var c=ch[i],r=Math.max(3,Math.hypot(px-c.x,py-c.y));v+=c.q/r;}return v;}
+  function trace(x,y,dir){
+    var pts=[[x,y]],step=4;
+    for(var i=0;i<900;i++){
+      var f=field(x,y),m=Math.hypot(f[0],f[1]);if(m<1e-9)break;
+      var f2=field(x+dir*f[0]/m*step/2,y+dir*f[1]/m*step/2),m2=Math.hypot(f2[0],f2[1]);if(m2<1e-9)break;
+      x+=dir*f2[0]/m2*step;y+=dir*f2[1]/m2*step;pts.push([x,y]);
+      if(x<-10||x>W+10||y<-10||y>H+10)break;
+      var hit=false;for(var j=0;j<ch.length;j++){var c=ch[j];if(c.q*dir<0&&Math.hypot(x-c.x,y-c.y)<7){hit=true;break;}}
+      if(hit)break;
+    }
+    return pts;
+  }
+  function rebuildLines(){
+    lines=[];
+    if(seeds){seeds.forEach(function(s){lines.push({pts:trace(s.x,s.y,1),dir:1});});}
+    else{
+      var hasPos=ch.some(function(c){return c.q>0;});
+      ch.forEach(function(c){
+        if(c.q>0||(!hasPos&&c.q<0)){
+          var dir=c.q>0?1:-1,n=Math.round(10*Math.abs(c.q));
+          for(var k=0;k<n;k++){var a=k/n*6.2832+0.3;lines.push({pts:trace(c.x+9*Math.cos(a),c.y+9*Math.sin(a),dir),dir:dir});}
+        }
+      });
+    }
+    dirtyL=false;
+  }
+  function buildEq(T){
+    var gw=W/2,gh=H/2,vals=new Float32Array(gw*gh),i=0,j,k;
+    for(j=0;j<gh;j++)for(k=0;k<gw;k++)vals[i++]=pot(k*2+1,j*2+1);
+    var s=Float32Array.from(vals).sort(),n=s.length,lo=s[Math.floor(n*0.1)],hi=s[Math.floor(n*0.9)],sp=(hi-lo)/10;
+    if(!(sp>1e-6))sp=0.004;
+    var cap=Math.max(Math.abs(hi),Math.abs(lo))*1.8;
+    var c2=document.createElement('canvas');c2.width=gw;c2.height=gh;
+    var x2=c2.getContext('2d'),img=x2.createImageData(gw,gh),pc=rgb(T.pos),nc=rgb(T.neg),ic=rgb(T.ink);
+    function band(v){return Math.floor(v/sp);}
+    for(j=0;j<gh;j++)for(k=0;k<gw;k++){
+      var idx=j*gw+k,v=vals[idx],b=band(v),edge=false;
+      if(Math.abs(v)<=cap){if(k+1<gw&&band(vals[idx+1])!==b)edge=true;if(j+1<gh&&band(vals[idx+gw])!==b)edge=true;}
+      var o=idx*4;
+      if(edge){img.data[o]=ic[0];img.data[o+1]=ic[1];img.data[o+2]=ic[2];img.data[o+3]=170;}
+      else{var c=v>=0?pc:nc;img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];img.data[o+3]=Math.round(72*Math.tanh(Math.abs(v)/(sp*4)));}
+    }
+    x2.putImageData(img,0,0);eqCv=c2;dirtyE=false;
+  }
+  function draw(){
+    var f=fit(canvas,H/W);if(!f)return;
+    var ctx=f.ctx,T=tok(),sc=f.w/W;
+    ctx.save();ctx.scale(sc,sc);
+    ctx.fillStyle=T.cv;ctx.fillRect(0,0,W,H);
+    if(dirtyL)rebuildLines();
+    if(view.eq){if(dirtyE||!eqCv||eqCv._t!==T.ink+T.pos+T.neg){buildEq(T);eqCv._t=T.ink+T.pos+T.neg;}ctx.imageSmoothingEnabled=true;ctx.drawImage(eqCv,0,0,W,H);}
+    if(view.vec){
+      for(var y=24;y<H;y+=36)for(var x=24;x<W;x+=36){
+        var near=false;for(var i=0;i<ch.length;i++){if(Math.hypot(x-ch[i].x,y-ch[i].y)<16){near=true;break;}}
+        if(near)continue;
+        var e=field(x,y),m=Math.hypot(e[0],e[1]);if(m<1e-9)continue;
+        var len=6+16*Math.tanh(m*vscale),ux=e[0]/m,uy=e[1]/m;
+        arrow(ctx,x-ux*len/2,y-uy*len/2,x+ux*len/2,y+uy*len/2,T.muted,1.4,5);
+      }
+    }
+    if(view.lines){
+      ctx.lineWidth=1.3;ctx.strokeStyle=T.ink;ctx.globalAlpha=0.78;
+      lines.forEach(function(L){
+        var p=L.pts;ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);for(var i=1;i<p.length;i++)ctx.lineTo(p[i][0],p[i][1]);ctx.stroke();
+        var acc=0,next=50;
+        for(var i2=1;i2<p.length;i2++){
+          acc+=Math.hypot(p[i2][0]-p[i2-1][0],p[i2][1]-p[i2-1][1]);
+          if(acc>=next){next+=110;
+            var a=Math.atan2(p[i2][1]-p[i2-1][1],p[i2][0]-p[i2-1][0])+(L.dir<0?Math.PI:0),x0=p[i2][0],y0=p[i2][1];
+            ctx.fillStyle=T.ink;ctx.beginPath();ctx.moveTo(x0+Math.cos(a)*5,y0+Math.sin(a)*5);ctx.lineTo(x0-Math.cos(a-0.6)*5,y0-Math.sin(a-0.6)*5);ctx.lineTo(x0-Math.cos(a+0.6)*5,y0-Math.sin(a+0.6)*5);ctx.closePath();ctx.fill();
+          }
+        }
+      });
+      ctx.globalAlpha=1;
+    }
+    ch.forEach(function(c){ if(c.small){ctx.fillStyle=c.q>0?T.pos:T.neg;ctx.beginPath();ctx.arc(c.x,c.y,3.6,0,6.2832);ctx.fill();} else dot(ctx,c.x,c.y,10+2.5*(Math.abs(c.q)-1),c.q,T); });
+    var text='Move the pointer over the map to probe the field. Drag a charge to move it.';
+    if(ptr&&drag===null){
+      var e2=field(ptr.x,ptr.y),m2=Math.hypot(e2[0],e2[1]);
+      ctx.fillStyle=T.surface;ctx.strokeStyle=T.ink;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ptr.x,ptr.y,5,0,6.2832);ctx.fill();ctx.stroke();
+      if(m2>1e-7){var ux2=e2[0]/m2,uy2=e2[1]/m2;arrow(ctx,ptr.x+ux2*7,ptr.y+uy2*7,ptr.x+ux2*44,ptr.y+uy2*44,T.accentText,3,10);
+        var ang=Math.round(Math.atan2(-e2[1],e2[0])*180/Math.PI);
+        text='Force on a + test charge here points at '+ang+'° (measured anticlockwise from →). Relative field strength '+fmt(m2*1e4,2)+(view.eq?'; relative potential '+fmt(pot(ptr.x,ptr.y)*100,2):'')+'.';}
+      else text='The field is almost zero at this point: the contributions cancel.';
+    }
+    ctx.restore();
+    msg.textContent=text;
+  }
+  function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;draw();});}
+  function toL(e){var r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
+  canvas.addEventListener('pointerdown',function(e){var p=toL(e),best=-1,bd=18;ch.forEach(function(c,i){if(c.fixed)return;var d=Math.hypot(p.x-c.x,p.y-c.y);if(d<bd){bd=d;best=i;}});if(best>=0){drag=best;try{canvas.setPointerCapture(e.pointerId);}catch(x){}}ptr=p;schedule();});
+  canvas.addEventListener('pointermove',function(e){var p=toL(e);ptr=p;if(drag!==null){ch[drag].x=clamp(p.x,12,W-12);ch[drag].y=clamp(p.y,12,H-12);dirtyL=dirtyE=true;}schedule();});
+  canvas.addEventListener('pointerup',function(){drag=null;schedule();});
+  canvas.addEventListener('pointercancel',function(){drag=null;schedule();});
+  canvas.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse'&&drag===null){ptr=null;schedule();}});
+  load(mode==='potential'?'dip':'dip');
+  reg(function(){dirtyE=true;draw();});
+}
+
+/* ================= DEFLECTION ================= */
+function Deflect(root){
+  var id=root.id,parts={e:{n:'Electron',q:-E_CH,m:M_E},p:{n:'Proton',q:E_CH,m:M_P},a:{n:'Alpha particle',q:2*E_CH,m:M_A}};
+  var L=0.05,sel='e',S;
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML=cv(id+'-cv','Charged particle deflected between parallel plates')+
+   '<div class="btnrow" data-part></div><div data-ctl></div><div class="readouts" data-ros></div><p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var canvas=$('canvas',wrap),msg=$('[data-msg]',wrap),pb=$('[data-part]',wrap);
+  var ctl=makeCtl(id,[
+    {k:'V',label:'Potential difference V',min:20,max:1000,step:10,v:200,fmt:function(v){return v+' V';}},
+    {k:'d',label:'Plate separation d',min:1,max:3,step:0.1,v:3,fmt:function(v){return v.toFixed(1)+' cm';}},
+    {k:'v',label:'Entry speed v',min:1,max:30,step:1,v:20,fmt:function(v){return v+' × 10⁶ m s⁻¹';}}
+  ],function(){draw();});
+  S=ctl.st;$('[data-ctl]',wrap).appendChild(ctl.el);
+  $('[data-ros]',wrap).innerHTML=roHTML([['E','Field strength E'],['F','Force F = QE'],['a','Acceleration a'],['t','Time between plates'],['y','Deflection y'],['th','Exit angle']]);
+  Object.keys(parts).forEach(function(k){var b=document.createElement('button');b.type='button';b.className='btn';b.textContent=parts[k].n;b.setAttribute('aria-pressed',String(k===sel));b.addEventListener('click',function(){sel=k;$$('button',pb).forEach(function(x){x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');draw();});pb.appendChild(b);});
+  function draw(){
+    var f=fit(canvas,0.55);if(!f)return;
+    var ctx=f.ctx,w=f.w,h=f.h,T=tok(),P=parts[sel];
+    var V=S.V,d=S.d/100,v0=S.v*1e6;
+    var E=V/d,F=P.q*E,a=F/P.m,t=L/v0,y=0.5*a*t*t,th=Math.abs(Math.atan(a*t/v0));
+    var mx=w*0.08,s=(w-2*mx)/5,gap=d*100*s,cy=h/2,top=cy-gap/2,bot=cy+gap/2;
+    ctx.fillStyle=T.cv;ctx.fillRect(0,0,w,h);
+    // field arrows
+    var nA=Math.max(5,Math.round(w/70));
+    for(var i=0;i<nA;i++){var x=mx+(i+0.5)*(5*s)/nA;arrow(ctx,x,top+gap*0.18,x,bot-gap*0.18,T.line,1.6,6);}
+    // plates
+    ctx.fillStyle=T.pos;ctx.fillRect(mx,top-7,5*s,7);ctx.fillStyle=T.neg;ctx.fillRect(mx,bot,5*s,7);
+    txt(ctx,'+ + + + + +',mx+5*s/2,top-12,T.pos,'600 12px '+T.mono,'center');
+    txt(ctx,'− − − − − −',mx+5*s/2,bot+22,T.neg,'600 12px '+T.mono,'center');
+    txt(ctx,'E',mx+5*s+10,cy+4,T.muted,'italic 600 13px '+T.body,'left');
+    // trajectory, screen y downward; positive q goes down (field direction)
+    var dirn=P.q>0?1:-1,hit=false,xEnd=L,half=d/2;
+    if(Math.abs(y)>half){hit=true;xEnd=v0*Math.sqrt(2*half/Math.abs(a));}
+    ctx.strokeStyle=T.accentText;ctx.lineWidth=2.6;ctx.beginPath();
+    var N=80;
+    for(var k=0;k<=N;k++){var xm=xEnd*k/N,tt=xm/v0,ym=0.5*a*tt*tt;var px=mx+xm*100*s,py=cy+(P.q>0?1:-1)*Math.abs(ym)*100*s*(a*P.q>0?1:1);if(k===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.stroke();
+    var ex=mx+xEnd*100*s,ey=cy+dirn*Math.abs(0.5*a*Math.pow(xEnd/v0,2))*100*s;
+    if(!hit){var ux=Math.cos(th),uy=dirn*Math.sin(th),len=Math.min(w-ex-6,Math.max(40,w*0.07));
+      ctx.setLineDash([5,4]);ctx.strokeStyle=T.accentText;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex+ux*(w-ex),ey+uy*(w-ex));ctx.stroke();ctx.setLineDash([]);}
+    dot(ctx,mx,cy,6,P.q,T);
+    ctx.fillStyle=T.accentText;ctx.beginPath();ctx.arc(ex,ey,4,0,6.2832);ctx.fill();
+    txt(ctx,'entry',mx,cy-12,T.muted,'600 11px '+T.mono,'center');
+    // length marker
+    var yb=bot+44;ctx.strokeStyle=T.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(mx,yb);ctx.lineTo(mx+5*s,yb);ctx.stroke();
+    txt(ctx,'L = 5.0 cm',mx+5*s/2,yb-5,T.muted,'600 11px '+T.mono,'center');
+    var R=root;
+    setRO(R,'E',fmt(E)+' V m⁻¹');setRO(R,'F',sgn(F)+' N');setRO(R,'a',fmt(Math.abs(a))+' m s⁻²');setRO(R,'t',fmt(t)+' s');
+    setRO(R,'y',hit?'hits plate':fmt(Math.abs(y)*1000,3)+' mm');setRO(R,'th',hit?'—':fmt(th*180/Math.PI,3)+'°');
+    msg.textContent=hit?P.n+' strikes the '+(P.q>0?'negative':'positive')+' plate after '+fmt(xEnd*100,2)+' cm. Reduce V, increase d or increase the entry speed.'
+      :P.n+' is pushed '+(P.q>0?'along':'against')+' the field, towards the '+(P.q>0?'negative':'positive')+' plate. Deflection y = ½at² with a = QE/m.';
+  }
+  reg(draw);draw();
+}
+
+/* ================= COULOMB ================= */
+function Coulomb(root){
+  var id=root.id,S;
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML='<div class="simgrid">'+cv(id+'-a','Two point charges with force arrows')+cv(id+'-b','Graph of force against separation')+'</div><div data-ctl></div><div class="readouts" data-ros></div><p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var ca=$('#'+id+'-a',wrap),cb=$('#'+id+'-b',wrap),msg=$('[data-msg]',wrap);
+  var ctl=makeCtl(id,[
+    {k:'q1',label:'Charge q₁',min:-10,max:10,step:0.5,v:3,fmt:function(v){return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' μC';}},
+    {k:'q2',label:'Charge q₂',min:-10,max:10,step:0.5,v:-5,fmt:function(v){return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' μC';}},
+    {k:'r',label:'Separation r',min:5,max:50,step:1,v:20,fmt:function(v){return v+' cm';}}
+  ],function(){draw();});
+  S=ctl.st;$('[data-ctl]',wrap).appendChild(ctl.el);
+  $('[data-ros]',wrap).innerHTML=roHTML([['F','Force F'],['n','Nature'],['k','F × r² (constant)'],['d','F at 2r']]);
+  function Fr(r){return K*Math.abs(S.q1*1e-6*S.q2*1e-6)/(r*r);}
+  function draw(){
+    var T=tok(),F=Fr(S.r/100),prod=S.q1*S.q2;
+    var f=fit(ca,0.5);
+    if(f){var ctx=f.ctx,w=f.w,h=f.h;ctx.fillStyle=T.cv;ctx.fillRect(0,0,w,h);
+      var gap=w*0.16+(S.r-5)/45*w*0.5,x1=w/2-gap/2,x2=w/2+gap/2,y=h*0.5;
+      function rad(q){return q===0?7:8+3.2*Math.sqrt(Math.abs(q));}
+      if(prod!==0){var len=Math.min(w*0.17,12+10*Math.sqrt(F)),att=prod<0,d1=att?1:-1;
+        arrow(ctx,x1,y,x1+d1*(rad(S.q1)+len),y,T.ink,3,11);arrow(ctx,x2,y,x2-d1*(rad(S.q2)+len),y,T.ink,3,11);}
+      dot(ctx,x1,y,rad(S.q1),S.q1,T);dot(ctx,x2,y,rad(S.q2),S.q2,T);
+      var lab=function(q){return (q>0?'+':q<0?'−':'')+Math.abs(q).toFixed(1)+' μC';};
+      txt(ctx,lab(S.q1),x1,y-rad(S.q1)-10,T.ink,'600 12px '+T.mono,'center');txt(ctx,lab(S.q2),x2,y-rad(S.q2)-10,T.ink,'600 12px '+T.mono,'center');
+      var yd=h-24;ctx.strokeStyle=T.muted;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x1,yd-6);ctx.lineTo(x1,yd+6);ctx.moveTo(x2,yd-6);ctx.lineTo(x2,yd+6);ctx.moveTo(x1,yd);ctx.lineTo(x2,yd);ctx.stroke();
+      txt(ctx,'r = '+S.r+' cm',w/2,yd-8,T.muted,'600 12px '+T.mono,'center');
+      txt(ctx,prod===0?'No force: one charge is zero':(prod<0?'Attraction':'Repulsion'),w/2,18,T.muted,'600 12px '+T.body,'center');
+    }
+    var g=fit(cb,0.5);
+    if(g){var c2=g.ctx,Fm=Fr(0.05)||1;
+      c2.fillStyle=T.cv;c2.fillRect(0,0,g.w,g.h);
+      var P=plot(c2,g.w,g.h,{xmin:5,xmax:50,ymin:0,ymax:Fm*1.05,xl:'separation r / cm',yl:'force F / N',xticks:[5,10,20,30,40,50],xfmt:function(v){return String(v);}});
+      clipPlot(c2,P);curve(c2,P,function(x){return Fr(x/100);},5,50,120,T.neg,2.4);c2.restore();
+      var r2=S.r*2;
+      if(prod!==0){
+        if(r2<=50){c2.setLineDash([4,4]);c2.strokeStyle=T.muted;c2.lineWidth=1.2;c2.beginPath();c2.moveTo(P.X(r2),P.Y(0));c2.lineTo(P.X(r2),P.Y(F/4));c2.stroke();c2.setLineDash([]);c2.fillStyle=T.muted;c2.beginPath();c2.arc(P.X(r2),P.Y(F/4),4,0,6.2832);c2.fill();txt(c2,'F/4',P.X(r2)+7,P.Y(F/4)-7,T.muted,'600 11px '+T.mono);}
+        c2.fillStyle=T.accentText;c2.beginPath();c2.arc(P.X(S.r),P.Y(F),6,0,6.2832);c2.fill();c2.strokeStyle=T.cv;c2.lineWidth=2;c2.stroke();
+      }
+    }
+    setRO(root,'F',prod===0?'0 N':fmt(F)+' N');
+    setRO(root,'n',prod===0?'none':prod<0?'attractive':'repulsive');
+    setRO(root,'k',prod===0?'0':fmt(F*Math.pow(S.r/100,2))+' N m²');
+    setRO(root,'d',prod===0?'0 N':(S.r*2<=50?fmt(Fr(S.r*2/100))+' N':'beyond graph'));
+    msg.textContent=prod===0?'Set both charges to non-zero values.':'F = (8.99×10⁹ × |q₁q₂|) / r². The two arrows have equal length because the forces are equal and opposite. Arrow lengths are compressed for display.';
+  }
+  reg(draw);draw();
+}
+
+/* ================= RADIAL ================= */
+function Radial(root){
+  var id=root.id,S,mode='r';
+  var qs={'p':['+1.0 nC (small positive)',1e-9],'n':['−1.0 nC (small negative)',-1e-9],'e':['a proton (+e)',E_CH],'m':['an electron (−e)',-E_CH]};
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML='<div class="simgrid">'+cv(id+'-a','Radial field around a charged sphere with a probe circle')+cv(id+'-b','Graph of field strength')+'</div>'+
+   '<div data-ctl></div><div class="btnrow"><span class="inl">Graph:</span><button class="btn" type="button" data-m="r" aria-pressed="true">E against r</button><button class="btn" type="button" data-m="i" aria-pressed="false">E against 1/r²</button>'+
+   '<label class="inl" for="'+id+'-tq">Test charge <select id="'+id+'-tq">'+Object.keys(qs).map(function(k){return '<option value="'+k+'">'+qs[k][0]+'</option>';}).join('')+'</select></label></div>'+
+   '<div class="readouts" data-ros></div><p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var ca=$('#'+id+'-a',wrap),cb=$('#'+id+'-b',wrap),msg=$('[data-msg]',wrap),tq=$('#'+id+'-tq',wrap);
+  var ctl=makeCtl(id,[
+    {k:'Q',label:'Sphere charge Q',min:-10,max:10,step:0.5,v:4,fmt:function(v){return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' nC';}},
+    {k:'R',label:'Sphere radius R',min:1,max:5,step:0.5,v:2,fmt:function(v){return v.toFixed(1)+' cm';}},
+    {k:'r',label:'Probe distance r from centre',min:1,max:50,step:0.5,v:10,fmt:function(v){return v.toFixed(1)+' cm';}}
+  ],function(st,k){if(k==='R'&&S.r<S.R)ctl.set('r',S.R);draw();});
+  S=ctl.st;$('[data-ctl]',wrap).appendChild(ctl.el);
+  $$('[data-m]',wrap).forEach(function(b){b.addEventListener('click',function(){mode=b.dataset.m;$$('[data-m]',wrap).forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});draw();});});
+  tq.addEventListener('change',draw);
+  $('[data-ros]',wrap).innerHTML=roHTML([['E','Field strength E at r'],['dir','Direction'],['E2','E at 2r'],['F','Force on test charge'],['Es','E at the surface']]);
+  function E(r){return K*Math.abs(S.Q*1e-9)/(r*r);}
+  function draw(){
+    var T=tok(),r=Math.max(S.r,S.R)/100,R=S.R/100,Q=S.Q*1e-9,Er=E(r);
+    var f=fit(ca,1);
+    if(f){var ctx=f.ctx,w=f.w,h=f.h;ctx.fillStyle=T.cv;ctx.fillRect(0,0,w,h);
+      var cx=w/2,cy=h/2,sc=(Math.min(w,h)/2-18)/0.5;
+      if(Q!==0){var n=16;for(var i=0;i<n;i++){var a=i/n*6.2832,r0=Math.max(R*sc,8),r1=Math.min(w,h)/2-6,p0=[cx+r0*Math.cos(a),cy+r0*Math.sin(a)],p1=[cx+r1*Math.cos(a),cy+r1*Math.sin(a)];
+        ctx.strokeStyle=T.muted;ctx.lineWidth=1;ctx.globalAlpha=0.8;ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.stroke();ctx.globalAlpha=1;
+        var rm=(r0+r1)/2+ (Q>0?10:-10);var am=[cx+rm*Math.cos(a),cy+rm*Math.sin(a)],dr=Q>0?1:-1;
+        ctx.fillStyle=T.muted;ctx.beginPath();ctx.moveTo(am[0]+dr*Math.cos(a)*5,am[1]+dr*Math.sin(a)*5);ctx.lineTo(am[0]-dr*Math.cos(a)*4+Math.sin(a)*4,am[1]-dr*Math.sin(a)*4-Math.cos(a)*4);ctx.lineTo(am[0]-dr*Math.cos(a)*4-Math.sin(a)*4,am[1]-dr*Math.sin(a)*4+Math.cos(a)*4);ctx.closePath();ctx.fill();}}
+      ctx.setLineDash([5,4]);ctx.strokeStyle=T.accentText;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(cx,cy,r*sc,0,6.2832);ctx.stroke();ctx.setLineDash([]);
+      dot(ctx,cx,cy,Math.max(R*sc,8),Q===0?0:Q,T);
+      if(Q!==0){var pa=-0.6,px=cx+r*sc*Math.cos(pa),py=cy+r*sc*Math.sin(pa),len=Math.min(60,12+9*Math.log10(Math.max(Er,1))),dr2=Q>0?1:-1;
+        ctx.fillStyle=T.surface;ctx.strokeStyle=T.ink;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(px,py,5,0,6.2832);ctx.fill();ctx.stroke();
+        arrow(ctx,px,py,px+dr2*Math.cos(pa)*len,py+dr2*Math.sin(pa)*len,T.accentText,3,10);}
+      txt(ctx,'r = '+S.r.toFixed(1)+' cm',cx,h-8,T.muted,'600 12px '+T.mono,'center');
+    }
+    var g=fit(cb,1);
+    if(g){var c2=g.ctx;c2.fillStyle=T.cv;c2.fillRect(0,0,g.w,g.h);
+      var Es=E(R),P;
+      if(mode==='r'){P=plot(c2,g.w,g.h,{xmin:0,xmax:50,ymin:0,ymax:(Es||1)*1.05,xl:'distance r from centre / cm',yl:'E / N C⁻¹',xticks:[0,10,20,30,40,50],xfmt:function(v){return String(v);}});
+        clipPlot(c2,P);if(Q!==0)curve(c2,P,function(x){return E(x/100);},S.R,50,160,T.neg,2.4);c2.restore();
+        if(Q!==0){c2.fillStyle=T.accentText;c2.beginPath();c2.arc(P.X(r*100),P.Y(Er),6,0,6.2832);c2.fill();c2.strokeStyle=T.cv;c2.lineWidth=2;c2.stroke();}}
+      else{var xm=1/(R*R);P=plot(c2,g.w,g.h,{xmin:0,xmax:xm*1.02,ymin:0,ymax:(Es||1)*1.05,xl:'1 / r² / m⁻²',yl:'E / N C⁻¹',xticks:ticks(0,xm,4),xfmt:function(v){return fmt(v,2);}});
+        clipPlot(c2,P);if(Q!==0){c2.strokeStyle=T.neg;c2.lineWidth=2.4;c2.beginPath();c2.moveTo(P.X(0),P.Y(0));c2.lineTo(P.X(xm),P.Y(Es));c2.stroke();}c2.restore();
+        if(Q!==0){c2.fillStyle=T.accentText;c2.beginPath();c2.arc(P.X(1/(r*r)),P.Y(Er),6,0,6.2832);c2.fill();c2.strokeStyle=T.cv;c2.lineWidth=2;c2.stroke();}}
+      if(Q===0)txt(c2,'Q = 0: no field',P.m.l+P.pw/2,P.m.t+P.ph/2,T.muted,'600 13px '+T.body,'center');
+    }
+    var q0=qs[tq.value][1],F=q0*Er*(Q>0?1:-1),away=(Q>0)===(q0>0);
+    setRO(root,'E',Q===0?'0':fmt(Er)+' N C⁻¹');
+    setRO(root,'dir',Q===0?'—':(Q>0?'away from sphere':'towards sphere'));
+    setRO(root,'E2',Q===0?'0':(2*r<=0.5?fmt(E(2*r))+' N C⁻¹ (= E/4)':'beyond 50 cm'));
+    setRO(root,'F',Q===0?'0':fmt(Math.abs(q0)*Er)+' N, '+(away?'repelled':'attracted'));
+    setRO(root,'Es',Q===0?'0':fmt(Es)+' N C⁻¹');
+    msg.textContent='Outside the sphere E = Q/(4πε₀r²), with r measured from the centre. The probe cannot go inside the sphere, where the field of a conducting sphere is zero.';
+  }
+  reg(draw);draw();
+}
+
+/* ================= POTENTIAL ================= */
+function Potential(root){
+  var id=root.id,S;
+  var qs={'p':['a proton (+e)',E_CH],'e':['an electron (−e)',-E_CH],'a':['+1.0 nC',1e-9],'b':['−1.0 nC',-1e-9]};
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML='<div class="simgrid">'+cv(id+'-a','Graph of potential against distance with tangent')+cv(id+'-b','Graph of field strength against distance with shaded area')+'</div>'+
+   '<div data-ctl></div><div class="btnrow"><label class="inl" for="'+id+'-tq">Test charge <select id="'+id+'-tq">'+Object.keys(qs).map(function(k){return '<option value="'+k+'">'+qs[k][0]+'</option>';}).join('')+'</select></label></div>'+
+   '<div class="readouts" data-ros></div><p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var ca=$('#'+id+'-a',wrap),cb=$('#'+id+'-b',wrap),msg=$('[data-msg]',wrap),tq=$('#'+id+'-tq',wrap);
+  var cm=function(v){return v.toFixed(1)+' cm';};
+  var ctl=makeCtl(id,[
+    {k:'Q',label:'Source charge Q',min:-10,max:10,step:0.5,v:5,fmt:function(v){return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' nC';}},
+    {k:'A',label:'Start distance r_A',min:1,max:30,step:0.5,v:2,fmt:cm},
+    {k:'B',label:'End distance r_B',min:1,max:30,step:0.5,v:1,fmt:cm}
+  ],function(){draw();});
+  S=ctl.st;$('[data-ctl]',wrap).appendChild(ctl.el);
+  tq.addEventListener('change',draw);
+  $('[data-ros]',wrap).innerHTML=roHTML([['VA','Potential at A'],['VB','Potential at B'],['dV','ΔV = V_B − V_A'],['W','Work W = qΔV'],['sl','Slope at A'],['EA','E at A = −slope']]);
+  function V(r){return K*S.Q*1e-9/r;}
+  function draw(){
+    var T=tok(),Q=S.Q*1e-9,rA=S.A/100,rB=S.B/100,q=qs[tq.value][1];
+    var VA=V(rA),VB=V(rB),dV=VB-VA,W=q*dV,slope=-K*Q/(rA*rA),EA=-slope;
+    var Vmax=Math.abs(V(0.01))||1,Emax=Math.abs(K*Q/(0.01*0.01))||1;
+    var f=fit(ca,0.85);
+    if(f){var ctx=f.ctx;ctx.fillStyle=T.cv;ctx.fillRect(0,0,f.w,f.h);
+      var lo=Q<0?-Vmax*1.05:0,hi=Q<0?0:Vmax*1.05;if(Q===0){lo=-1;hi=1;}
+      var P=plot(ctx,f.w,f.h,{xmin:0,xmax:30,ymin:lo,ymax:hi,xl:'distance r / cm',yl:'potential V / V',xticks:[0,5,10,15,20,25,30],xfmt:function(v){return String(v);}});
+      if(Q!==0){clipPlot(ctx,P);curve(ctx,P,function(x){return V(x/100);},1,30,160,Q>0?T.pos:T.neg,2.4);
+        var sCm=slope/100,x0=S.A-4,x1=S.A+4;ctx.setLineDash([6,4]);ctx.strokeStyle=T.accentText;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(P.X(x0),P.Y(VA+sCm*(x0-S.A)));ctx.lineTo(P.X(x1),P.Y(VA+sCm*(x1-S.A)));ctx.stroke();ctx.setLineDash([]);ctx.restore();
+        [[S.A,VA,'A'],[S.B,VB,'B']].forEach(function(p){ctx.fillStyle=T.ink;ctx.beginPath();ctx.arc(P.X(p[0]),P.Y(p[1]),5.5,0,6.2832);ctx.fill();ctx.strokeStyle=T.cv;ctx.lineWidth=2;ctx.stroke();txt(ctx,p[2],P.X(p[0])+8,P.Y(p[1])+(Q>0?-8:16),T.ink,'700 13px '+T.body);});
+      } else txt(ctx,'Q = 0: V = 0 everywhere',P.m.l+P.pw/2,P.m.t+P.ph/2,T.muted,'600 13px '+T.body,'center');
+    }
+    var g=fit(cb,0.85);
+    if(g){var c2=g.ctx;c2.fillStyle=T.cv;c2.fillRect(0,0,g.w,g.h);
+      var Pe=plot(c2,g.w,g.h,{xmin:0,xmax:30,ymin:0,ymax:Emax*1.05,xl:'distance r / cm',yl:'field strength E / N C⁻¹',xticks:[0,5,10,15,20,25,30],xfmt:function(v){return String(v);}});
+      if(Q!==0){var a0=Math.min(S.A,S.B),a1=Math.max(S.A,S.B);clipPlot(c2,Pe);
+        c2.fillStyle=T.accentText;c2.globalAlpha=0.35;c2.beginPath();c2.moveTo(Pe.X(a0),Pe.Y(0));
+        for(var i=0;i<=60;i++){var x=a0+(a1-a0)*i/60;c2.lineTo(Pe.X(x),Pe.Y(K*Math.abs(Q)/Math.pow(x/100,2)));}
+        c2.lineTo(Pe.X(a1),Pe.Y(0));c2.closePath();c2.fill();c2.globalAlpha=1;
+        curve(c2,Pe,function(x){return K*Math.abs(Q)/Math.pow(x/100,2);},1,30,160,T.neg,2.4);c2.restore();
+        c2.fillStyle=T.ink;c2.beginPath();c2.arc(Pe.X(S.A),Pe.Y(Math.abs(EA)),5,0,6.2832);c2.fill();
+        if(a1>a0)txt(c2,'area = |ΔV|',Pe.X((a0+a1)/2)+14,Pe.Y(0)-10,T.ink,'600 11px '+T.mono,'left');}
+    }
+    var none=Q===0;
+    setRO(root,'VA',none?'0':sgn(VA)+' V');setRO(root,'VB',none?'0':sgn(VB)+' V');setRO(root,'dV',none?'0':sgn(dV)+' V');
+    setRO(root,'W',none?'0':sgn(W)+' J');setRO(root,'sl',none?'0':sgn(slope)+' V m⁻¹');setRO(root,'EA',none?'0':fmt(Math.abs(EA))+' N C⁻¹');
+    msg.textContent=none?'Set Q to a non-zero value.':(W>0?'W is positive: an external agent does work and the charge gains potential energy.':W<0?'W is negative: the field does work and the charge gains kinetic energy if released.':'No change in potential, so no work is done.')+' The shaded area under the E–r graph equals the magnitude of ΔV.';
+  }
+  reg(draw);draw();
+}
+
+/* ================= COMPARE ================= */
+function Compare(root){
+  var id=root.id,S;
+  var pairs={
+    ep:{n:'Proton and electron',q1:E_CH,q2:-E_CH,m1:M_P,m2:M_E,x:-10.3},
+    pp:{n:'Two protons',q1:E_CH,q2:E_CH,m1:M_P,m2:M_P,x:-14},
+    ee:{n:'Two electrons',q1:-E_CH,q2:-E_CH,m1:M_E,m2:M_E,x:-12},
+    mc:{n:'Two 1 kg masses vs two 1 C charges',q1:1,q2:1,m1:1,m2:1,x:0}
+  },sel='ep';
+  var wrap=document.createElement('div');wrap.style.display='grid';wrap.style.gap='14px';
+  wrap.innerHTML=cv(id+'-a','Log graph of electric and gravitational force against separation')+
+   '<div class="btnrow" data-pairs></div><div data-ctl></div><div class="readouts" data-ros></div><p class="sub" data-msg aria-live="polite"></p>';
+  root.appendChild(wrap);
+  var canvas=$('canvas',wrap),msg=$('[data-msg]',wrap),pb=$('[data-pairs]',wrap);
+  var ctl=makeCtl(id,[{k:'x',label:'Separation r',min:-15,max:0,step:0.1,v:-10.3,fmt:function(v){return '10'+sup(v.toFixed(1))+' m';}}],function(){draw();});
+  S=ctl.st;$('[data-ctl]',wrap).appendChild(ctl.el);
+  $('[data-ros]',wrap).innerHTML=roHTML([['Fe','Electric force'],['Fg','Gravitational force'],['ratio','F_E / F_G'],['dir','Directions']]);
+  Object.keys(pairs).forEach(function(k){var b=document.createElement('button');b.type='button';b.className='btn';b.textContent=pairs[k].n;b.setAttribute('aria-pressed',String(k===sel));b.addEventListener('click',function(){sel=k;ctl.set('x',pairs[k].x);$$('button',pb).forEach(function(x){x.setAttribute('aria-pressed','false');});b.setAttribute('aria-pressed','true');draw();});pb.appendChild(b);});
+  function draw(){
+    var T=tok(),p=pairs[sel],r=Math.pow(10,S.x);
+    var ke=K*Math.abs(p.q1*p.q2),kg=G*p.m1*p.m2,Fe=ke/(r*r),Fg=kg/(r*r),rep=p.q1*p.q2>0;
+    var f=fit(canvas,0.6);
+    if(f){var ctx=f.ctx,w=f.w,h=f.h;ctx.fillStyle=T.cv;ctx.fillRect(0,0,w,h);
+      var yHi=Math.ceil(Math.log10(ke)+30),yLo=Math.floor(Math.log10(kg)-0);
+      yHi=Math.ceil(yHi/10)*10;yLo=Math.floor(yLo/10)*10;
+      var yt=[];for(var v=yLo;v<=yHi;v+=10)yt.push(v);
+      var P=plot(ctx,w,h,{xmin:-15,xmax:0,ymin:yLo,ymax:yHi,xl:'separation r / m',yl:'force F / N',xticks:[-15,-12,-9,-6,-3,0],xfmt:function(v){return '10'+sup(v);},noZero:true,yticks:yt,yfmt:function(v){return '10'+sup(v);}});
+      clipPlot(ctx,P);
+      curve(ctx,P,function(x){return Math.log10(ke)-2*x;},-15,0,2,T.pos,2.6);
+      curve(ctx,P,function(x){return Math.log10(kg)-2*x;},-15,0,2,T.neg,2.6);
+      var xp=S.x,y1=Math.log10(Fe),y2=Math.log10(Fg);
+      ctx.strokeStyle=T.ink;ctx.lineWidth=1.4;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(P.X(xp),P.Y(y1));ctx.lineTo(P.X(xp),P.Y(y2));ctx.stroke();ctx.setLineDash([]);
+      [[y1,T.pos],[y2,T.neg]].forEach(function(a){ctx.fillStyle=a[1];ctx.beginPath();ctx.arc(P.X(xp),P.Y(a[0]),5.5,0,6.2832);ctx.fill();ctx.strokeStyle=T.cv;ctx.lineWidth=2;ctx.stroke();});
+      ctx.restore();
+      var midY=(P.Y(y1)+P.Y(y2))/2,onLeft=P.X(xp)>P.m.l+P.pw*0.55;
+      txt(ctx,'× '+sci(Fe/Fg,2),P.X(xp)+(onLeft?-8:8),midY,T.ink,'700 12px '+T.mono,onLeft?'right':'left','middle');
+      txt(ctx,'electric',P.m.l+8,P.Y(Math.log10(ke)+1.2)+0,T.pos,'700 12px '+T.body,'left','bottom');
+      txt(ctx,'gravitational',P.m.l+8,P.Y(Math.log10(kg)+1.2),T.neg,'700 12px '+T.body,'left','bottom');
+    }
+    setRO(root,'Fe',fmt(Fe)+' N');setRO(root,'Fg',fmt(Fg)+' N');setRO(root,'ratio',sci(Fe/Fg,3));
+    setRO(root,'dir',rep?'electric repels, gravity attracts':'both attract');
+    msg.textContent='Both forces ∝ 1/r², so the two lines are parallel and the ratio F_E / F_G = k|Q₁Q₂| / (Gm₁m₂) does not depend on r. The graph uses logarithmic axes.';
+  }
+  reg(draw);draw();
+}
+
+var SIMS={fieldmap:FieldMapper,deflect:Deflect,coulomb:Coulomb,radial:Radial,potential:Potential,compare:Compare};
+window.__SIMS={SIMS:SIMS,redrawAll:redrawAll,reg:reg,$:$,$$:$$,fmt:fmt,sci:sci,sup:sup};
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var X=window.__SIMS,$=X.$,$$=X.$$,redrawAll=X.redrawAll;
+
+/* ---------- question bank ---------- */
+var MCQ=[
+{t:'22.1',q:'Which definition of electric field strength at a point is correct?',
+ o:['The force per unit positive charge acting on a small stationary test charge at that point','The work done per unit charge in moving a test charge from infinity to that point','The force per unit mass acting on a small test mass at that point','The energy stored per unit volume of space at that point'],a:0,
+ e:'Field strength is a force-based quantity, <var>E</var> = <var>F</var>/<var>Q</var>. Option B defines electric potential and option C defines gravitational field strength.'},
+{t:'22.1',q:'Which statement about electric field lines is correct?',
+ o:['Field lines cross at points where the field is strongest.','The tangent to a line gives the direction of the force on a positive test charge, and closer lines mean a stronger field.','Field lines start on negative charges and end on positive charges.','Field lines are always parallel to one another.'],a:1,
+ e:'Lines never cross, because the field would then have two directions at one point. They start on positive charges and end on negative charges. They are parallel only in a uniform field.'},
+{t:'22.1',q:'Two parallel metal plates are 4.0 cm apart with a potential difference of 800 V between them. What is the field strength between the plates, away from the edges?',
+ o:['32 V m<sup>−1</sup>','2.0 × 10<sup>4</sup> V m<sup>−1</sup>','2.0 × 10<sup>2</sup> V m<sup>−1</sup>','5.0 × 10<sup>−5</sup> V m<sup>−1</sup>'],a:1,
+ e:'<var>E</var> = <var>V</var>/<var>d</var> = 800 / 0.040 = 2.0 × 10<sup>4</sup> V m<sup>−1</sup>. Leaving <var>d</var> in centimetres gives 200, which is option C.'},
+{t:'22.1',q:'An electron enters the uniform field between two horizontal plates, moving parallel to them. The upper plate is positive. Which describes its path between the plates?',
+ o:['A straight line','A parabola curving upwards','A parabola curving downwards','A circular arc'],a:1,
+ e:'The force on an electron is opposite to <var>E</var>, so it points up towards the positive plate. A constant force at right angles to the initial velocity gives a parabola, as for a projectile.'},
+
+{t:'22.2',q:'Which expression gives the magnitude of the force between two point charges <var>Q</var><sub>1</sub> and <var>Q</var><sub>2</sub> a distance <var>r</var> apart in a vacuum?',
+ o:['<var>Q</var><sub>1</sub><var>Q</var><sub>2</sub> / (4π<var>ε</var><sub>0</sub><var>r</var>)','<var>Q</var><sub>1</sub><var>Q</var><sub>2</sub> / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)','4π<var>ε</var><sub>0</sub><var>Q</var><sub>1</sub><var>Q</var><sub>2</sub> / <var>r</var><sup>2</sup>','(<var>Q</var><sub>1</sub> + <var>Q</var><sub>2</sub>) / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)'],a:1,
+ e:'The force is proportional to the product of the charges and inversely proportional to <var>r</var><sup>2</sup>. Option A is the form of the potential energy, not the force.'},
+{t:'22.2',q:'Two point charges exert a force <var>F</var> on each other. The separation is tripled. What is the new force?',
+ o:['<var>F</var>/3','<var>F</var>/6','<var>F</var>/9','9<var>F</var>'],a:2,
+ e:'<var>F</var> ∝ 1/<var>r</var><sup>2</sup>, so tripling <var>r</var> divides <var>F</var> by 3<sup>2</sup> = 9.'},
+{t:'22.2',q:'The charge on one of two point charges is doubled, and the distance between them is also doubled. The new force is…',
+ o:['2<var>F</var>','<var>F</var>','<var>F</var>/2','<var>F</var>/4'],a:2,
+ e:'<var>F</var> ∝ <var>Q</var><sub>1</sub><var>Q</var><sub>2</sub>/<var>r</var><sup>2</sup>, so the factor is 2 / 2<sup>2</sup> = 1/2.'},
+{t:'22.2',q:'Two identical small metal spheres carry +4.0 nC and −2.0 nC. They are touched together and then returned to their original separation. The force between them is now…',
+ o:['8 times larger and attractive','1/8 as large and repulsive','1/8 as large and still attractive','1/4 as large and repulsive'],a:1,
+ e:'The total charge (+2.0 nC) is shared equally, so each sphere has +1.0 nC. The product of charges falls from 8.0 to 1.0 (nC)<sup>2</sup>, so the magnitude is 1/8 and the force is now repulsive.'},
+
+{t:'22.3',q:'The field strength at distance <var>r</var> from an isolated point charge <var>Q</var> in a vacuum is…',
+ o:['<var>Q</var> / (4π<var>ε</var><sub>0</sub><var>r</var>)','<var>Q</var> / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)','<var>Q</var><sup>2</sup> / (4π<var>ε</var><sub>0</sub><var>r</var><sup>2</sup>)','4π<var>ε</var><sub>0</sub><var>Q</var> / <var>r</var><sup>2</sup>'],a:1,
+ e:'Divide Coulomb\'s force by the test charge <var>q</var>. Option A has the 1/<var>r</var> dependence of potential.'},
+{t:'22.3',q:'At 2.0 cm from a small charged sphere the field strength is 800 N C<sup>−1</sup>. What is it at 4.0 cm from the same sphere?',
+ o:['400 N C<sup>−1</sup>','200 N C<sup>−1</sup>','100 N C<sup>−1</sup>','1600 N C<sup>−1</sup>'],a:1,
+ e:'Doubling <var>r</var> divides <var>E</var> by 2<sup>2</sup> = 4, so 800 / 4 = 200 N C<sup>−1</sup>.'},
+{t:'22.3',q:'A charged conducting sphere of radius 0.10 m carries +2.0 nC. What is the field strength at its surface?',
+ o:['1.8 × 10<sup>2</sup> N C<sup>−1</sup>','1.8 × 10<sup>3</sup> N C<sup>−1</sup>','1.8 × 10<sup>4</sup> N C<sup>−1</sup>','18 N C<sup>−1</sup>'],a:1,
+ e:'Treat the charge as a point at the centre with <var>r</var> = 0.10 m: <var>E</var> = (8.99 × 10<sup>9</sup> × 2.0 × 10<sup>−9</sup>) / 0.10<sup>2</sup> = 1.8 × 10<sup>3</sup> N C<sup>−1</sup>.'},
+{t:'22.3',q:'For a point charge, a graph of field strength <var>E</var> (y-axis) against 1/<var>r</var><sup>2</sup> (x-axis) is…',
+ o:['a curve that falls towards zero','a straight line through the origin with gradient <var>Q</var>/(4π<var>ε</var><sub>0</sub>)','a straight line with a negative gradient','a horizontal line'],a:1,
+ e:'<var>E</var> = [<var>Q</var>/(4π<var>ε</var><sub>0</sub>)] × (1/<var>r</var><sup>2</sup>) has the form <var>y</var> = <var>mx</var>.'},
+
+{t:'22.4',q:'The electric potential at a point is defined as…',
+ o:['the force per unit positive charge at that point','the work done per unit positive charge in moving a small test charge from infinity to that point','the potential energy of a unit mass at that point','the work done per unit charge between two charged plates'],a:1,
+ e:'Potential is an energy-based quantity measured from infinity. Option A is the field strength.'},
+{t:'22.4',q:'What is the electric potential 0.50 m from a point charge of −4.0 nC?',
+ o:['+72 V','−72 V','−36 V','−144 V'],a:1,
+ e:'<var>V</var> = (8.99 × 10<sup>9</sup> × (−4.0 × 10<sup>−9</sup>)) / 0.50 = −72 V. The negative sign of the charge carries through to the potential.'},
+{t:'22.4',q:'On a graph of potential <var>V</var> against distance <var>x</var>, the electric field strength at a point is…',
+ o:['the gradient of the graph at that point','the negative of the gradient of the graph at that point','the area under the graph up to that point','<var>V</var> divided by <var>x</var> at that point'],a:1,
+ e:'<var>E</var> = −d<var>V</var>/d<var>x</var>. The field points in the direction in which the potential falls.'},
+{t:'22.4',q:'A charge of +1.0 μC is moved through a potential difference of 200 V. The work done on the charge is…',
+ o:['2.0 × 10<sup>−8</sup> J','2.0 × 10<sup>−4</sup> J','2.0 × 10<sup>−6</sup> J','2.0 × 10<sup>8</sup> J'],a:1,
+ e:'<var>W</var> = <var>q</var>Δ<var>V</var> = 1.0 × 10<sup>−6</sup> × 200 = 2.0 × 10<sup>−4</sup> J.'},
+{t:'22.4',q:'Which statement about equipotential surfaces is correct?',
+ o:['Field lines are parallel to equipotentials.','No work is done moving a charge along an equipotential surface.','Equipotentials are closer together where the field is weaker.','The potential is zero on every equipotential surface.'],a:1,
+ e:'Field lines cross equipotentials at right angles, so a displacement along the surface has no component along the force. Equipotentials crowd together where the field is stronger.'},
+
+{t:'22.5',q:'Which feature is shared by the gravitational field of a point mass and the electric field of a point charge?',
+ o:['Both forces are always attractive.','Both field strengths vary as 1/<var>r</var><sup>2</sup>.','Both fields can be shielded by a conductor.','Both potentials are negative.'],a:1,
+ e:'Both are inverse-square fields. Electric forces can repel, gravity cannot be shielded, and electric potential can be positive.'},
+{t:'22.5',q:'Which statement describes a difference between gravitational and electric forces?',
+ o:['The electric force obeys an inverse-square law but gravity does not.','Gravity is always attractive, whereas the electric force can attract or repel.','Gravity acts only between objects in contact.','The electric force depends on the masses of the particles.'],a:1,
+ e:'Mass has only one kind, so gravity only attracts. Charge has two kinds, so electric forces can attract or repel.'},
+{t:'22.5',q:'For two protons in a vacuum, the ratio <var>F</var><sub>electric</sub> / <var>F</var><sub>gravitational</sub>…',
+ o:['increases as the separation increases','decreases as the separation increases','is independent of the separation','is zero'],a:2,
+ e:'Both forces are proportional to 1/<var>r</var><sup>2</sup>, so <var>r</var> cancels in the ratio, leaving about 1.2 × 10<sup>36</sup>.'},
+{t:'22.5',q:'Gravitational potential near an isolated point mass is negative, while electric potential near an isolated positive point charge is positive. Why?',
+ o:['Gravitational forces are weaker than electric forces.','Both potentials are zero at infinity. Gravity always attracts, so bringing a mass in from infinity involves negative work by an external agent, but bringing a positive charge towards a positive source needs positive work.','Mass has no sign, so its potential is undefined.','The two potentials are measured in different units.'],a:1,
+ e:'The sign comes from the direction of the force relative to the motion from infinity, not from the size of the force or the units.'}
+];
+
+var STRUCT=[
+{t:'22.1',title:'Alpha particle in a uniform field',marks:5,
+ q:'An alpha particle (charge +3.2 × 10<sup>−19</sup> C, mass 6.64 × 10<sup>−27</sup> kg) is in a uniform electric field of strength 5.0 × 10<sup>4</sup> N C<sup>−1</sup>.',
+ parts:[
+  {p:'(a) Calculate the force on the particle.',m:2,num:{v:1.6e-14,u:'N'},ans:'<p><var>F</var> = <var>QE</var> = 3.2 × 10<sup>−19</sup> × 5.0 × 10<sup>4</sup> = <b>1.6 × 10<sup>−14</sup> N</b></p>'},
+  {p:'(b) Calculate its acceleration.',m:2,num:{v:2.41e12,u:'m s⁻²'},ans:'<p><var>a</var> = <var>F</var>/<var>m</var> = 1.6 × 10<sup>−14</sup> / 6.64 × 10<sup>−27</sup> = <b>2.4 × 10<sup>12</sup> m s<sup>−2</sup></b></p>'},
+  {p:'(c) State the direction of the force relative to the field.',m:1,ans:'<p>The particle is positive, so the force is <b>in the same direction as the field</b>.</p>'}
+ ]},
+{t:'22.1',title:'Parallel plates',marks:4,
+ q:'Two parallel metal plates are 1.5 cm apart in a vacuum. The potential difference between them is 600 V.',
+ parts:[
+  {p:'(a) Calculate the electric field strength between the plates.',m:2,num:{v:4.0e4,u:'V m⁻¹'},ans:'<p><var>E</var> = <var>V</var>/<var>d</var> = 600 / 0.015 = <b>4.0 × 10<sup>4</sup> V m<sup>−1</sup></b></p>'},
+  {p:'(b) Calculate the force on an electron between the plates.',m:2,num:{v:6.4e-15,u:'N'},ans:'<p><var>F</var> = <var>eE</var> = 1.60 × 10<sup>−19</sup> × 4.0 × 10<sup>4</sup> = <b>6.4 × 10<sup>−15</sup> N</b>, directed towards the positive plate.</p>'}
+ ]},
+{t:'22.2',title:'Two point charges',marks:6,
+ q:'Two small spheres in air carry charges of +3.0 μC and −5.0 μC. Their centres are 20 cm apart.',
+ parts:[
+  {p:'(a) Calculate the magnitude of the force between them.',m:2,num:{v:3.37,u:'N'},ans:'<p><var>F</var> = (8.99 × 10<sup>9</sup> × 3.0 × 10<sup>−6</sup> × 5.0 × 10<sup>−6</sup>) / (0.20)<sup>2</sup> = 0.135 / 0.040 = <b>3.4 N</b>. The force is attractive because the charges are unlike.</p>'},
+  {p:'(b) Calculate the force when the separation is increased to 40 cm.',m:2,num:{v:0.843,u:'N'},ans:'<p>The separation doubles, so the force falls to one quarter: 3.37 / 4 = <b>0.84 N</b>.</p>'},
+  {p:'(c) Both charges are now doubled and the separation is 40 cm. Calculate the force.',m:2,num:{v:3.37,u:'N'},ans:'<p>Doubling both charges multiplies the force by 4. Starting from 0.84 N, <var>F</var> = <b>3.4 N</b>, the same as in (a).</p>'}
+ ]},
+{t:'22.2',title:'Finding an unknown charge',marks:3,
+ q:'Two small spheres carry equal charges <var>Q</var>. They are 5.0 cm apart and the force between them is 0.036 N.',
+ parts:[
+  {p:'(a) Calculate <var>Q</var>.',m:3,num:{v:1.0e-7,u:'C',hint:'Rearrange F = Q²/(4πε₀r²) for Q.'},ans:'<p><var>Q</var><sup>2</sup> = <var>Fr</var><sup>2</sup> / (8.99 × 10<sup>9</sup>) = (0.036 × 0.050<sup>2</sup>) / 8.99 × 10<sup>9</sup> = 1.0 × 10<sup>−14</sup></p><p><var>Q</var> = <b>1.0 × 10<sup>−7</sup> C</b> (100 nC)</p>'}
+ ]},
+{t:'22.3',title:'Field of a point charge',marks:6,
+ q:'A small sphere carries a charge of +6.0 nC.',
+ parts:[
+  {p:'(a) Calculate the field strength 0.15 m from the sphere.',m:2,num:{v:2397,u:'N C⁻¹'},ans:'<p><var>E</var> = (8.99 × 10<sup>9</sup> × 6.0 × 10<sup>−9</sup>) / 0.15<sup>2</sup> = 53.9 / 0.0225 = <b>2.4 × 10<sup>3</sup> N C<sup>−1</sup></b>, directed away from the sphere.</p>'},
+  {p:'(b) A charge of −2.0 nC is placed at this point. Calculate the force on it.',m:2,num:{v:4.79e-6,u:'N'},ans:'<p><var>F</var> = <var>qE</var> = 2.0 × 10<sup>−9</sup> × 2.4 × 10<sup>3</sup> = <b>4.8 × 10<sup>−6</sup> N</b>, directed <b>towards</b> the sphere because the test charge is negative.</p>'},
+  {p:'(c) At what distance from the sphere is the field strength 600 N C<sup>−1</sup>?',m:2,num:{v:0.300,u:'m'},ans:'<p><var>r</var><sup>2</sup> = <var>kQ</var>/<var>E</var> = 53.9 / 600 = 0.0899, so <var>r</var> = <b>0.30 m</b>. (Check: the field falls by a factor of 4 when the distance doubles from 0.15 m.)</p>'}
+ ]},
+{t:'22.3',title:'Field at the surface of a sphere',marks:4,
+ q:'A conducting sphere of radius 5.0 cm carries a charge of −8.0 nC.',
+ parts:[
+  {p:'(a) Calculate the magnitude of the field strength at the surface.',m:2,num:{v:2.877e4,u:'N C⁻¹'},ans:'<p>Treat the charge as a point at the centre, with <var>r</var> = 0.050 m.</p><p><var>E</var> = (8.99 × 10<sup>9</sup> × 8.0 × 10<sup>−9</sup>) / 0.050<sup>2</sup> = <b>2.9 × 10<sup>4</sup> N C<sup>−1</sup></b>, directed towards the sphere.</p>'},
+  {p:'(b) Calculate the field strength 10 cm from the centre.',m:2,num:{v:7192,u:'N C⁻¹'},ans:'<p>The distance is doubled, so <var>E</var> falls to a quarter: 2.88 × 10<sup>4</sup> / 4 = <b>7.2 × 10<sup>3</sup> N C<sup>−1</sup></b>.</p>'}
+ ]},
+{t:'22.4',title:'Moving a proton in a radial field',marks:7,
+ q:'A fixed point charge of +5.0 nC is in a vacuum. A proton is moved from a point 2.0 cm from the charge to a point 1.0 cm from it.',
+ parts:[
+  {p:'(a) Calculate the potential 2.0 cm from the charge.',m:2,num:{v:2247,u:'V'},ans:'<p><var>V</var> = <var>Q</var>/(4π<var>ε</var><sub>0</sub><var>r</var>) = (8.99 × 10<sup>9</sup> × 5.0 × 10<sup>−9</sup>) / 0.020 = <b>2.2 × 10<sup>3</sup> V</b></p>'},
+  {p:'(b) Calculate the potential 1.0 cm from the charge.',m:1,num:{v:4495,u:'V'},ans:'<p>Halving <var>r</var> doubles <var>V</var>: <b>4.5 × 10<sup>3</sup> V</b>.</p>'},
+  {p:'(c) Calculate the work done on the proton.',m:2,num:{v:3.6e-16,u:'J'},ans:'<p><var>W</var> = <var>e</var>Δ<var>V</var> = 1.60 × 10<sup>−19</sup> × (4495 − 2247) = <b>3.6 × 10<sup>−16</sup> J</b>. It is positive because the proton is moved against the repulsion.</p>'},
+  {p:'(d) The proton is released and moves back to the 2.0 cm point. Calculate its speed there.',m:2,num:{v:6.56e5,u:'m s⁻¹'},ans:'<p>Kinetic energy gained = 3.6 × 10<sup>−16</sup> J.</p><p>½<var>mv</var><sup>2</sup> = 3.6 × 10<sup>−16</sup> → <var>v</var> = √(2 × 3.6 × 10<sup>−16</sup> / 1.67 × 10<sup>−27</sup>) = <b>6.6 × 10<sup>5</sup> m s<sup>−1</sup></b></p>'}
+ ]},
+{t:'22.4',title:'Potential difference in a uniform field',marks:4,
+ q:'In a region the electric field is uniform with strength 4.0 × 10<sup>3</sup> V m<sup>−1</sup>. Two points A and B are 5.0 cm apart along a field line.',
+ parts:[
+  {p:'(a) Calculate the potential difference between A and B.',m:2,num:{v:200,u:'V'},ans:'<p>Δ<var>V</var> = <var>Ed</var> = 4.0 × 10<sup>3</sup> × 0.050 = <b>200 V</b>.</p>'},
+  {p:'(b) Calculate the work done in moving a charge of +2.0 μC from the lower-potential point to the higher-potential point.',m:2,num:{v:4.0e-4,u:'J'},ans:'<p><var>W</var> = <var>q</var>Δ<var>V</var> = 2.0 × 10<sup>−6</sup> × 200 = <b>4.0 × 10<sup>−4</sup> J</b>, positive because the charge is moved against the field.</p>'}
+ ]},
+{t:'22.5',title:'Forces inside a hydrogen atom',marks:6,
+ q:'In a hydrogen atom the electron is 5.3 × 10<sup>−11</sup> m from the proton.',
+ parts:[
+  {p:'(a) Calculate the electric force between them.',m:2,num:{v:8.19e-8,u:'N'},ans:'<p><var>F</var><sub>E</sub> = (8.99 × 10<sup>9</sup> × (1.60 × 10<sup>−19</sup>)<sup>2</sup>) / (5.3 × 10<sup>−11</sup>)<sup>2</sup> = <b>8.2 × 10<sup>−8</sup> N</b></p>'},
+  {p:'(b) Calculate the gravitational force between them.',m:2,num:{v:3.61e-47,u:'N'},ans:'<p><var>F</var><sub>G</sub> = (6.67 × 10<sup>−11</sup> × 9.11 × 10<sup>−31</sup> × 1.67 × 10<sup>−27</sup>) / (5.3 × 10<sup>−11</sup>)<sup>2</sup> = <b>3.6 × 10<sup>−47</sup> N</b></p>'},
+  {p:'(c) Calculate the ratio F<sub>E</sub> / F<sub>G</sub>.',m:1,num:{v:2.27e39,u:''},ans:'<p>8.19 × 10<sup>−8</sup> / 3.61 × 10<sup>−47</sup> = <b>2.3 × 10<sup>39</sup></b></p>'},
+  {p:'(d) Explain why gravity can be ignored in atoms but not for planets.',m:1,ans:'<p>In atoms the electric force is about 10<sup>39</sup> times larger. Planets contain almost equal amounts of positive and negative charge, so the electric forces cancel, while the gravitational forces from every mass add up.</p>'}
+ ]},
+{t:'22.5',title:'Gravitational field strength',marks:3,
+ q:'The Earth has mass 5.98 × 10<sup>24</sup> kg and radius 6.37 × 10<sup>6</sup> m. Treat it as a point mass at its centre.',
+ parts:[
+  {p:'(a) Calculate the gravitational field strength at the surface.',m:2,num:{v:9.83,u:'N kg⁻¹',tol:0.01},ans:'<p><var>g</var> = <var>GM</var>/<var>r</var><sup>2</sup> = (6.67 × 10<sup>−11</sup> × 5.98 × 10<sup>24</sup>) / (6.37 × 10<sup>6</sup>)<sup>2</sup> = <b>9.8 N kg<sup>−1</sup></b></p>'},
+  {p:'(b) State the electric quantity that plays the same role as <var>g</var>, and its unit.',m:1,ans:'<p>Electric field strength <var>E</var>, in <b>N C<sup>−1</sup></b>. Force per unit mass for gravity corresponds to force per unit charge for electricity.</p>'}
+ ]}
+];
+
+/* ---------- state ---------- */
+var topics=['22.1','22.2','22.3','22.4','22.5'];
+var res={};topics.forEach(function(t){res[t]={};});
+function esc(s){return s;}
+
+/* ---------- MCQ renderer ---------- */
+function renderMCQ(host,list,prefix,onAns){
+  host.innerHTML='';
+  list.forEach(function(q,i){
+    var box=document.createElement('div');box.className='q';
+    box.innerHTML='<p class="qt"><span class="qn">Q'+(i+1)+'</span>'+q.q+'</p><div class="opts" role="group" aria-label="Answer options for question '+(i+1)+'">'+
+      q.o.map(function(o,j){return '<button type="button" class="opt" data-j="'+j+'"><span class="ltr">'+'ABCD'.charAt(j)+'</span><span>'+o+'</span></button>';}).join('')+'</div><div class="fb" hidden aria-live="polite"></div>';
+    var done=false;
+    $$('.opt',box).forEach(function(b){b.addEventListener('click',function(){
+      if(done)return;done=true;var j=+b.dataset.j,ok=j===q.a;
+      $$('.opt',box).forEach(function(x,k){x.disabled=true;if(k===q.a)x.classList.add('good');});
+      if(!ok)b.classList.add('bad');
+      var fb=$('.fb',box);fb.hidden=false;
+      fb.innerHTML=(ok?'<b>Correct.</b> ':'<b>Not quite.</b> The answer is '+'ABCD'.charAt(q.a)+'. ')+q.e;
+      onAns(q,i,ok);
+    });});
+    host.appendChild(box);
+  });
+}
+
+/* ---------- structured renderer ---------- */
+function parseNum(s){
+  s=String(s).trim().replace(/\s+/g,'').replace(',','.').replace(/−/g,'-');
+  if(!s)return NaN;
+  var m=s.match(/^(-?\d*\.?\d+)[x×*]10\^?\(?(-?\d+)\)?$/i);
+  if(m)return parseFloat(m[1])*Math.pow(10,parseInt(m[2],10));
+  return Number(s);
+}
+function renderStruct(host,topic){
+  var n=0;
+  STRUCT.filter(function(s){return s.t===topic;}).forEach(function(s){
+    n++;var box=document.createElement('div');box.className='sq';
+    var uid='sq'+topic.replace('.','')+'-'+n;
+    var html='<div class="sqh"><h4>Question '+n+': '+s.title+'</h4><span class="mk">['+s.marks+' marks]</span></div><p>'+s.q+'</p>';
+    s.parts.forEach(function(p,i){
+      html+='<div class="part"><p>'+p.p+' <span class="mk">['+p.m+']</span></p><div class="partrow">';
+      if(p.num)html+='<input type="text" inputmode="decimal" autocomplete="off" id="'+uid+'-'+i+'" placeholder="e.g. 2.4e3" aria-label="Your answer to part '+p.p.slice(1,2)+'"> <span class="mk">'+p.num.u+'</span> <button type="button" class="btn" data-chk="'+i+'">Check</button>';
+      html+='<button type="button" class="btn" data-show="'+i+'">Show worked answer</button></div><div class="res" data-res="'+i+'" aria-live="polite"></div><div class="ans" data-ans="'+i+'" hidden>'+p.ans+'</div></div>';
+    });
+    box.innerHTML=html;
+    $$('[data-chk]',box).forEach(function(b){b.addEventListener('click',function(){
+      var i=+b.dataset.chk,p=s.parts[i],out=$('[data-res="'+i+'"]',box),inp=$('#'+uid+'-'+i,box),v=parseNum(inp.value);
+      if(!isFinite(v)){out.className='res bad';out.textContent='Enter a number, for example 2.4e3 or 2.4x10^3.';return;}
+      var tol=p.num.tol||0.03,ok=Math.abs(v-p.num.v)/Math.abs(p.num.v)<=tol;
+      out.className='res '+(ok?'good':'bad');
+      out.textContent=ok?'Correct. Check the worked answer for the method marks.':'Not yet. '+(p.num.hint?p.num.hint+' ':'')+'Check unit conversions and powers of ten, then compare with the worked answer.';
+    });});
+    $$('[data-show]',box).forEach(function(b){b.addEventListener('click',function(){var a=$('[data-ans="'+b.dataset.show+'"]',box);a.hidden=!a.hidden;b.textContent=a.hidden?'Show worked answer':'Hide worked answer';});});
+    host.appendChild(box);
+  });
+}
+
+/* ---------- topic quizzes & progress ---------- */
+function progress(t){var tot=MCQ.filter(function(q){return q.t===t;}).length,r=res[t],c=0,d=0;Object.keys(r).forEach(function(k){d++;if(r[k])c++;});return {done:d,ok:c,tot:tot};}
+function updateProgress(){
+  topics.forEach(function(t){var p=progress(t),e=$('[data-pg="'+t+'"]');if(e)e.textContent=p.done?p.ok+'/'+p.tot:'';var r=$('[data-rp="'+t+'"]');if(r)r.textContent=p.done?'Quiz '+p.ok+'/'+p.tot:'';});
+}
+$$('[data-quiz]').forEach(function(host){
+  var t=host.dataset.quiz,list=MCQ.filter(function(q){return q.t===t;});
+  renderMCQ(host,list,t,function(q,i,ok){res[t][i]=ok;updateProgress();});
+});
+$$('[data-struct]').forEach(function(host){renderStruct(host,host.dataset.struct);});
+
+/* ---------- practice test ---------- */
+var testState={order:[],ans:{}};
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
+function newTest(){
+  testState={order:shuffle(MCQ),ans:{}};
+  $('#testScore').innerHTML='';
+  renderMCQ($('#testHost'),testState.order,'test',function(q,i,ok){testState.ans[i]=ok;testUpdate();});
+  testUpdate();
+}
+function testUpdate(){
+  var n=testState.order.length,d=Object.keys(testState.ans).length,c=0;
+  Object.keys(testState.ans).forEach(function(k){if(testState.ans[k])c++;});
+  $('#testProg').textContent=d+' of '+n+' answered';
+  $('#testBar').style.width=(d/n*100)+'%';
+  if(d===n){
+    var by={};topics.forEach(function(t){by[t]={ok:0,tot:0};});
+    testState.order.forEach(function(q,i){by[q.t].tot++;if(testState.ans[i])by[q.t].ok++;});
+    var pct=Math.round(c/n*100),weak=topics.slice().sort(function(a,b){return by[a].ok/by[a].tot-by[b].ok/by[b].tot;})[0];
+    var rows=topics.map(function(t){var p=by[t].ok/by[t].tot*100;return '<div class="row"><span>'+t+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+by[t].ok+'/'+by[t].tot+'</span></div>';}).join('');
+    var allOk=by[weak].ok===by[weak].tot;
+    $('#testScore').innerHTML='<div class="score"><span class="label">Result</span><div class="big">'+c+' / '+n+' <span style="font-size:1.1rem;font-weight:600;color:var(--muted)">('+pct+'%)</span></div><div class="rows">'+rows+'</div><p>'+(allOk?'Full marks on every subtopic.':'Review 22.'+weak.slice(3)+' next: it was your lowest score. Its notes and simulation are on the topic page.')+'</p></div>';
+  }
+}
+$('#testNew').addEventListener('click',newTest);
+
+/* ---------- navigation ---------- */
+var pages=$$('.page'),navlist=$('#navlist'),current='';
+function setTabs(sec){
+  var panels=$$(':scope > .panel',sec);
+  if(panels.length<2||sec.querySelector('.tabs'))return;
+  var bar=document.createElement('div');bar.className='tabs';bar.setAttribute('role','tablist');
+  panels.forEach(function(p,i){
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id=sec.id+'-tab'+i;b.setAttribute('role','tab');b.textContent=p.dataset.panel;
+    b.addEventListener('click',function(){selTab(sec,i);});
+    b.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var n=(i+(e.key==='ArrowRight'?1:panels.length-1))%panels.length;selTab(sec,n);$('#'+sec.id+'-tab'+n).focus();}});
+    bar.appendChild(b);p.setAttribute('role','tabpanel');
+  });
+  sec.insertBefore(bar,panels[0]);selTab(sec,0);
+}
+function selTab(sec,i){
+  var panels=$$(':scope > .panel',sec);
+  panels.forEach(function(p,k){p.classList.toggle('on',k===i);});
+  $$('.tab',sec).forEach(function(b,k){b.setAttribute('aria-selected',String(k===i));b.tabIndex=k===i?0:-1;});
+  requestAnimationFrame(redrawAll);
+}
+function show(id,noHash){
+  var sec=document.getElementById(id);if(!sec)id='s-home',sec=document.getElementById(id);
+  current=id;
+  pages.forEach(function(p){p.classList.toggle('on',p.id===id);});
+  $$('.nav').forEach(function(b){if(b.dataset.go===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  if(!noHash){try{history.replaceState(null,'','#'+id);}catch(e){}}
+  window.scrollTo(0,0);
+  requestAnimationFrame(redrawAll);
+}
+pages.forEach(function(p){
+  if(p.id==='s-home'||p.id==='s-test'||p.id==='s-formulas'){}
+  var b=document.createElement('button');b.type='button';b.className='nav';b.dataset.go=p.id;
+  var label=p.dataset.title,pg=p.dataset.topic?'<span class="pg" data-pg="'+p.dataset.topic+'"></span>':'';
+  b.innerHTML='<span>'+label+'</span>'+pg;
+  if(p.id==='s-test'||p.id==='s-formulas'){}
+  b.addEventListener('click',function(){show(p.id);});
+  navlist.appendChild(b);
+  if(p.dataset.topic)setTabs(p);
+});
+// roadmap
+var road=$('#road'),desc={
+ '22.1':'Field lines, E = F/Q, uniform fields and deflection of charged particles. Simulations: field map, charged particle between plates.',
+ '22.2':'Force between point charges and the inverse-square law. Simulation: force and graph against separation.',
+ '22.3':'Field strength of a point charge or sphere, E–r and E–1/r² graphs. Simulation: charged sphere.',
+ '22.4':'Potential, work, E = −dV/dx and equipotentials. Simulations: V and E graphs, equipotential map.',
+ '22.5':'Comparing gravity and electricity, including the sign of potential. Simulation: force comparison on a log graph.'};
+topics.forEach(function(t){
+  var sec=pages.filter(function(p){return p.dataset.topic===t;})[0];
+  var b=document.createElement('button');b.type='button';
+  b.innerHTML='<span class="num" style="justify-self:start">'+t+'</span><span><span class="t">'+sec.dataset.title.replace(/^22\.\d /,'')+'</span><span class="d">'+desc[t]+'</span></span><span class="pg" data-rp="'+t+'"></span>';
+  b.addEventListener('click',function(){show(sec.id);});road.appendChild(b);
+});
+
+/* ---------- theme ---------- */
+var root=document.documentElement;
+function effective(){return root.getAttribute('data-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+try{var st=localStorage.getItem('cl-theme');if(st==='dark'||st==='light')root.setAttribute('data-theme',st);}catch(e){}
+$('#themeBtn').addEventListener('click',function(){var n=effective()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('cl-theme',n);}catch(e){}redrawAll();});
+if(window.matchMedia){try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){redrawAll();});}catch(e){}}
+
+/* ---------- init sims ---------- */
+$$('[data-sim]').forEach(function(el){var f=X.SIMS[el.dataset.sim];if(f)f(el);});
+var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(redrawAll,80);});
+newTest();updateProgress();
+var h=(location.hash||'').replace('#','');
+show(document.getElementById(h)?h:'s-home',true);
+window.addEventListener('hashchange',function(){var k=(location.hash||'').replace('#','');if(document.getElementById(k)&&k!==current)show(k,true);});
+})();
+</script>
+
+</body></html>
